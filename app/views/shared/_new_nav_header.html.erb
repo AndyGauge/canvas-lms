@@ -47,7 +47,7 @@
         </div>
       <% end %>
         <ul id="menu" class="ic-app-header__menu-list">
-          <% if @current_user %>
+          <% if @current_user && false%>
             <li class="menu-item ic-app-header__menu-list-item <%= ' ic-app-header__menu-list-item--active' if active_path?('/profile') %>">
               <a id="global_nav_profile_link" role="button" href="/profile" class="ic-app-header__menu-list-link">
                 <div class="menu-item-icon-container">
@@ -61,7 +61,7 @@
                 </div>
               </a>
             </li>
-          <% else %>
+          <% elsif false %>
             <li class="menu-item ic-app-header__menu-list-item">
               <a id="global_nav_login_link" href="/login" class="ic-app-header__menu-list-link">
                 <div class="menu-item-icon-container" aria-hidden="true">
@@ -115,27 +115,7 @@
               </a>
             </li>
           <% end %>
-          <li class="menu-item ic-app-header__menu-list-item <%= ' ic-app-header__menu-list-item--active' if active_path?('/calendar') %>">
-            <a id="global_nav_calendar_link" href="/calendar" class="ic-app-header__menu-list-link">
-              <div class="menu-item-icon-container" aria-hidden="true">
-                <%= render(partial: "shared/svg/#{'k12/' if k12?}svg_icon_calendar_new_styles.svg") %>
-              </div>
-              <div class="menu-item__text">
-                <%= t('Calendar') %>
-              </div>
-            </a>
-          </li>
-          <li class="menu-item ic-app-header__menu-list-item <%= ' ic-app-header__menu-list-item--active' if active_path?('/conversations') %>">
-            <a id="global_nav_conversations_link" href="/conversations" class="ic-app-header__menu-list-link">
-              <div class="menu-item-icon-container">
-                <span aria-hidden="true"><%= render(partial: "shared/svg/#{'k12/' if k12?}svg_icon_inbox.svg") %></span>
-                <span class="menu-item__badge"></span>
-              </div>
-              <div class="menu-item__text">
-                <%= t('Inbox') %>
-              </div>
-            </a>
-          </li>
+
           <% unless @current_user.nil? %>
             <%= render(:partial => 'external_tools/global_nav_menu_items') %>
           <% end %>
