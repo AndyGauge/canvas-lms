@@ -22,9 +22,10 @@
   <%= image_tag(brand_variable("ic-brand-right-sidebar-logo"), :class => "ic-sidebar-logo__image", :alt => "Canvas by Instructure") %>
 </div>
 <% end %>
-<div>
-  Please complete your security training
-</div>
-<div>
-  Thank you for completing your security traning
-</div>
+<% if @current_user.on_guard_supervisor.present? %>
+  You are logged in as supervisor<br>
+  TODO: Create checklist of tasks to complete setup
+<% else %>
+  You are logged in as user<br>
+  TODO: Provide link to completed training or current training
+<% end %>
