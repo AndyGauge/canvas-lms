@@ -115,6 +115,16 @@
               </a>
             </li>
           <% end %>
+          <li class="menu-item ic-app-header__menu-list-item <%= 'ic-app-header__menu-list-item--active' if active_path?('/enroll') %>">
+            <a id="global_nav_courses_link" role="button" href="#" class="ic-app-header__menu-list-link">
+              <div class="menu-item-icon-container" aria-hidden="true">
+                <%= render(partial: "shared/svg/#{'k12/' if k12?}svg_icon_groups_new_styles.svg") %>
+              </div>
+              <div class="menu-item__text">
+                <%= t('Users') %>
+              </div>
+            </a>
+          </li>
 
           <% unless @current_user.nil? %>
             <%= render(:partial => 'external_tools/global_nav_menu_items') %>
