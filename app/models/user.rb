@@ -176,6 +176,10 @@ class User < ActiveRecord::Base
 
   belongs_to :otp_communication_channel, :class_name => 'CommunicationChannel'
 
+  #On Guard
+  belongs_to :on_guard_organization, :class_name => 'OnGuard::Organization'
+  has_one :on_guard_supervisor, :class_name => 'OnGuard::Supervisor'
+
   include StickySisFields
   are_sis_sticky :name, :sortable_name, :short_name
 
