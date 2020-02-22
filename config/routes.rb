@@ -960,7 +960,8 @@ CanvasRails::Application.routes.draw do
 
   namespace :on_guard do
     resources :users
-    resources :billing
+    resources :billings
+    resource :sign_up
   end
 
   ### API routes ###
