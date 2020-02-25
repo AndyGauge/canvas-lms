@@ -8,13 +8,13 @@ module OnGuard
     end
 
     def create
-      @signup = OnGuard::SignUp.create(params)
+      @sign_up = OnGuard::SignUp.new(params).create
     end
 
     def update
-      @signup = OnGuard::SignUp.update(params)
-      if @signup.complete
-        redirect_to @signup.user
+      @sign_up = OnGuard::SignUp.new(params).update
+      if @sign_up.complete
+        redirect_to @sign_up.user
       end
     end
 
