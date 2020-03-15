@@ -1,6 +1,6 @@
 module OnGuard
   class Supervisor < ActiveRecord::Base
     belongs_to :user
-    has_one :on_guard_organization, :through => :user
+    belongs_to :on_guard_organization, :class_name => 'OnGuard::Organization'
   end
 end

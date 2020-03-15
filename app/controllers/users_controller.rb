@@ -382,6 +382,7 @@ class UsersController < ApplicationController
       respond_to do |format|
         if @users.length == 1 && params[:term]
           format.html {
+
             redirect_to(named_context_url(@context, :context_user_url, @users.first))
           }
         else
@@ -432,7 +433,7 @@ class UsersController < ApplicationController
   # @returns [User]
   def api_index
     get_context
-    return unless authorized_action(@context, @current_user, :read_roster)
+    return unless authorized_action(@context, @current_user, :read_roster) || @current_user.on_guard_supervisor
     search_term = params[:search_term].presence
     page_opts = {}
     if search_term

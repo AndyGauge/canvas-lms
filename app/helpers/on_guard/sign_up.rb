@@ -1,22 +1,24 @@
 module OnGuard
   class SignUp
-    attr_reader :user, :complete
+    attr_reader :user, :complete, :pseudonym
     def initialize(params)
       @params = params
     end
     def create
-      begin
         @user = User.create!
         @user.update!(@params.require(:user).permit(
             :name,
             :email
         ))
-        @user.create_on_guard_organization! name: @params[:user][:organization][:name]
+        organization = @user.create_on_guard_organization! name: @params[:user][:organization][:name]
+        @user.create_on_guard_supervisor! on_guard_organization: organization
+        @user.workflow_state='registered'
+        @pseudonym = @user.create_pseudonym(unique_id: @user.email, password: @params[:user][:pseudonym][:password], password_confirmation: @params[:user][:pseudonym][:password_confirmation], workflow_state: 'active')
+        @user.accept_terms
         @user.save!
-      rescue
-        @user.destroy
-      end
-
+        PseudonymSession.new(@pseudonym).save unless @pseudonym.new_record?
+        AccountUser.create user: @user, account: organization.account, role_id: 3  #StudentEnrollment role
+        return self
     end
     def update
       if @params[:billing]

@@ -19,15 +19,14 @@
 import $ from 'jquery'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from '../account_course_user_search/index'
-import router from '../account_course_user_search/router'
-import configureStore from '../account_course_user_search/store/configureStore'
-import initialState from '../account_course_user_search/store/initialState'
+import App from '../on_guard_users/index'
+import router from '../on_guard_users/router'
+import configureStore from '../on_guard_users/store/configureStore'
+import initialState from '../on_guard_users/store/initialState'
 import ready from '@instructure/ready'
 
 // eg: '/accounts/xxx' for anything like '/accounts/xxx/whatever`
-let account_path_match = window.location.pathname.match(/.*accounts\/[^/]*/)
-initialState.tabList.basePath = account_path_match ? account_path_match[0] : 'users'
+//initialState.tabList.basePath = '/on_guard/users'
 
 // Note. Only the UsersPane/Tab is using a redux store. The courses tab is
 // still using the old store model. That is why this might seem kind of weird.

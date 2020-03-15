@@ -27,7 +27,7 @@ module Login::Shared
                               :oauth2_nonce)
   end
 
-  def successful_login(user, pseudonym, otp_passed = false)
+  def successful_login(user, pseudonym, otp_passed = false, render_page = true)
     CanvasBreachMitigation::MaskingSecrets.reset_authenticity_token!(cookies)
     Auditors::Authentication.record(pseudonym, 'login')
 
@@ -67,7 +67,7 @@ module Login::Shared
     end
     session[:require_terms] = true if @domain_root_account.require_acceptance_of_terms?(user)
     @current_user = user
-
+    if render_page
     respond_to do |format|
       if (oauth = session[:oauth2])
         provider = Canvas::Oauth::Provider.new(oauth[:client_id], oauth[:redirect_uri], oauth[:scopes], oauth[:purpose])
@@ -91,6 +91,7 @@ module Login::Shared
         format.html { redirect_back_or_default(dashboard_url(:login_success => '1')) }
       end
       format.json { render :json => pseudonym.as_json(:methods => :user_code), :status => :ok }
+    end
     end
   end
 

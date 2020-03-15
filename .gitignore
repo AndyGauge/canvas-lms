@@ -13,8 +13,10 @@
 .bundle/
 .byebug_history
 .env
+.idea
 /.yardoc/
 /.ruby-version
+app/.DS_store
 /app/views/info/styleguide.html.erb
 /config/*.yml
 /config/environments/*-local.rb
@@ -29,6 +31,7 @@ docker-compose.override.yml
 /exports/
 Gemfile.lock
 Gemfile.lock.next
+gems/
 knapsack_rspec_report.json
 /log/
 mkmf.log

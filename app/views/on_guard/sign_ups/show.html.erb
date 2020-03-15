@@ -11,8 +11,18 @@ Where do you work?
   </li>
   <% end %>
 </ul>
-<%= f.text_field :name, placeholder: 'Your name' %>
-<%= f.text_field :email, placeholder: 'Your email' %>
+  <div>
+    <%= f.text_field :name, placeholder: 'Your name' %>
+    <%= f.text_field :email, placeholder: 'Your email' %>
+  </div>
+<div>
+  <%= f.fields_for :pseudonym do |psd| %>
+    <%= psd.password_field :password, placeholder: 'Password' %>
+    <%= psd.password_field :password_confirmation, placeholder: 'Password' %>
+  <% end %>
+
+</div>
+
 
   <%= f.submit 'Sign Up' %>
 <% end %>
