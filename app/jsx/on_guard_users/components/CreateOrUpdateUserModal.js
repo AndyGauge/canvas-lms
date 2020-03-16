@@ -153,7 +153,6 @@ export default class CreateOrUpdateUserModal extends React.Component {
         hint: I18n.t('First and Last name.'),
         required: I18n.t('Full name is required')
       }
-
     ]
       .concat(
         this.props.createOrUpdate === 'create'
@@ -172,10 +171,11 @@ export default class CreateOrUpdateUserModal extends React.Component {
                 label: I18n.t('Email'),
                 required: I18n.t('Email is required')
               },
-              this.props.showSIS && false && {
-                name: 'pseudonym[sis_user_id]',
-                label: I18n.t('SIS ID')
-              },
+              this.props.showSIS &&
+                false && {
+                  name: 'pseudonym[sis_user_id]',
+                  label: I18n.t('SIS ID')
+                },
               {
                 name: 'pseudonym[send_confirmation]',
                 label: I18n.t('Email the user about this account creation'),

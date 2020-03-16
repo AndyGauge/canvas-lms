@@ -39,7 +39,7 @@ export default function UsersListRow({accountId, user, permissions, handleSubmit
         />
       </th>
       <td>{user.email}</td>
-      <td>{"Not Completed"}</td>
+      <td>Not Completed</td>
       <td>{user.last_login && <FriendlyDatetime dateTime={user.last_login} />}</td>
       <td style={{whiteSpace: 'nowrap'}}>
         {permissions.can_masquerade && (

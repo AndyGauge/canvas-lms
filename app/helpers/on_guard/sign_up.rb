@@ -18,6 +18,7 @@ module OnGuard
         @user.save!
         PseudonymSession.new(@pseudonym).save unless @pseudonym.new_record?
         AccountUser.create user: @user, account: organization.account, role_id: 3  #StudentEnrollment role
+        OnGuard::Payment.new(organization).create_customer
         return self
     end
     def update

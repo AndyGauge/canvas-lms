@@ -45,7 +45,7 @@ export default class AccountCourseUserSearch extends React.Component {
 
   updateQueryParams(params) {
     const query = stringify(params)
-    //window.history.replaceState(null, null, `?${query}`)
+    // window.history.replaceState(null, null, `?${query}`)
   }
 
   render() {

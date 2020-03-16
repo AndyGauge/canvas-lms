@@ -26,7 +26,7 @@ import initialState from '../on_guard_users/store/initialState'
 import ready from '@instructure/ready'
 
 // eg: '/accounts/xxx' for anything like '/accounts/xxx/whatever`
-//initialState.tabList.basePath = '/on_guard/users'
+// initialState.tabList.basePath = '/on_guard/users'
 
 // Note. Only the UsersPane/Tab is using a redux store. The courses tab is
 // still using the old store model. That is why this might seem kind of weird.

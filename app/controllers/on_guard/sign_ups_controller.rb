@@ -14,6 +14,8 @@ module OnGuard
     def create
       @sign_up = OnGuard::SignUp.new(params).create
       successful_login(@sign_up.user, @sign_up.pseudonym, false, false)
+      js_bundle :payment_signup
+      render html: '', layout: true
     end
 
     def update

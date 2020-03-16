@@ -39,7 +39,6 @@ export default function UsersToolbar(props) {
   return (
     <form onSubmit={preventDefault(props.onApplyFilters)}>
       <FormFieldGroup layout="columns" description="" vAlign="top">
-
         <TextInput
           type="search"
           value={props.search_term}
