@@ -2,7 +2,7 @@ module OnGuard
   class SignUpsController < ApplicationController
     include Login::Shared
 
-    def show
+    def show_bak
       logout_current_user
       @user = User.new
       @organization = @user.build_on_guard_organization
@@ -11,11 +11,11 @@ module OnGuard
 
     end
 
-    def create
-      @sign_up = OnGuard::SignUp.new(params).create
-      successful_login(@sign_up.user, @sign_up.pseudonym, false, false)
+    def show
+      #@sign_up = OnGuard::SignUp.new(params).create
+      #successful_login(@sign_up.user, @sign_up.pseudonym, false, false)
       js_bundle :payment_signup
-      render html: '', layout: true
+      render html: '<div id="root"></div>'.html_safe, layout: 'bare'
     end
 
     def update

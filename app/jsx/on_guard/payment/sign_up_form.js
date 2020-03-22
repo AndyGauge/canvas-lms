@@ -16,11 +16,74 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import {CardElement} from '@stripe/react-stripe-js'
+import React, { useState } from 'react'
+import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js'
+import Modal from '../../shared/components/InstuiModal'
+import {Button} from '@instructure/ui-buttons'
+import {FormFieldGroup} from '@instructure/ui-form-field'
+import {TextInput} from '@instructure/ui-text-input'
 
-function PaymentSignup() {
-  return <CardElement />
+export default function PaymentSignup() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [organization, setOrganization] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation , setPasswordConfirmation] = useState('');
+  const stripe = useStripe();
+  const elements = useElements();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!stripe || !elements) {
+      return;
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <TextInput renderLabel='Your Company/Organization'
+                 value = {organization}
+                 onChange = {e => setOrganization(e.target.value)}
+      />
+
+      <TextInput renderLabel='Name'
+                 value = {name}
+                 onChange = {e => setName(e.target.value)}
+                 />
+      <TextInput renderLabel='E-mail'
+                 value = {email}
+                 onChange = {e => setEmail(e.target.value)}
+      />
+      <TextInput renderLabel='Password'
+                 value = {password}
+                 onChange = {e => setPassword(e.target.value)}
+                 type='password'
+      />
+      <TextInput renderLabel='Password Confirmation'
+                 value = {passwordConfirmation}
+                 onChange = {e => setPasswordConfirmation(e.target.value)}
+                 type='password'
+      />
+      <span className='cMIPy_bGBk' >
+        <span className="bNerA_bGBk bNerA_NmrE bNerA_dBtH bNerA_bBOa bNerA_buDT bNerA_DpxJ">
+          <span className="fCrpb_bGBk fCrpb_egrg">Payment Details</span>
+        </span>
+      </span>
+      <div style={{border: '0.0625rem solid #C7CDD1', borderRadius: '0.25rem', padding: '10px 20px'}}>
+      <CardElement
+                    options = {{
+                      style: {
+                        base: {
+                          fontSize: '16px',
+                          color:    '#2D3B45',
+                          fontFamily: 'Latoweb, Lato, Helvetica Neue, Helvetica, Arial, sans-serif',
+                          fontWeight: 400,
+
+                        }
+                      }
+                    }}
+      />
+    </div>
+    </form>
+  );
+
 }
-
-export default PaymentSignup
