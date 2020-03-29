@@ -20,6 +20,7 @@ import React, {useState} from 'react'
 import {useStripe, useElements, CardElement} from '@stripe/react-stripe-js'
 import Modal from '../../shared/components/InstuiModal'
 import {Button} from '@instructure/ui-buttons'
+import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader';
 import {FormFieldGroup} from '@instructure/ui-form-field'
 import {TextInput} from '@instructure/ui-text-input'
 
@@ -29,9 +30,10 @@ export default function PaymentSignup() {
   const [organization, setOrganization] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState('')
   const stripe = useStripe()
   const elements = useElements()
-  /* const csrf_token = document.head.querySelector("[name~=csrf-token]").content */
 
   const handleSubmit = async event => {
     event.preventDefault()
@@ -46,6 +48,7 @@ export default function PaymentSignup() {
         billing_details: {name}
       })
       .then(({paymentMethod}) => {
+        setLoading(true)
         fetch('/on_guard/sign_up/', {
           method: 'post',
           body: JSON.stringify({
@@ -58,72 +61,100 @@ export default function PaymentSignup() {
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(response => {
-          console.log(response)
         })
+          .then(response => response.json())
+          .then(data => {
+              setStatus(data.status)
+              setLoading(false)
+          })
+          .catch(error => {
+            setStatus('error')
+          })
       })
   }
 
-  return (
-    <Modal
-      as="form"
-      onSubmit={handleSubmit}
-      open
-      size="small"
-      label="Sign Up"
-      shouldCloseOnDocumentClick={false}
-    >
-      <Modal.Body>
-        <FormFieldGroup layout="stacked" rowSpacing="small" description="">
-          <TextInput
-            renderLabel="Your Company/Organization"
-            value={organization}
-            onChange={e => setOrganization(e.target.value)}
-          />
+  switch(status) {
+    case 'active':
+      return ('<div />');
+      break;
+    default:
+      return (
+        <div>
+          <div className={'loading-spinner'}>
+            <ClimbingBoxLoader
+              size={20}
+              color={'#D7B236'}
+              loading={loading}
+              css={`display: block;
+          position: fixed;
+          z-index: 10099;
+          margin-left: -4em;
+          margin-top: -3.5em;
+          left: 50%;
+          top: 50%;`}
+            />
+          </div>
+          <Modal
+            as="form"
+            onSubmit={handleSubmit}
+            open
+            size="small"
+            label="Sign Up"
+            shouldCloseOnDocumentClick={false}
+          >
+            <Modal.Body>
+              <FormFieldGroup layout="stacked" rowSpacing="small" description="">
+                <TextInput
+                  renderLabel="Your Company/Organization"
+                  value={organization}
+                  onChange={e => setOrganization(e.target.value)}
+                />
 
-          <TextInput renderLabel="Name" value={name} onChange={e => setName(e.target.value)} />
-          <TextInput renderLabel="E-mail" value={email} onChange={e => setEmail(e.target.value)} />
-          <TextInput
-            renderLabel="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            type="password"
-          />
-          <TextInput
-            renderLabel="Password Confirmation"
-            value={passwordConfirmation}
-            onChange={e => setPasswordConfirmation(e.target.value)}
-            type="password"
-          />
-        </FormFieldGroup>
-        <span className="cMIPy_bGBk">
+                <TextInput renderLabel="Name" value={name} onChange={e => setName(e.target.value)}/>
+                <TextInput renderLabel="E-mail" value={email} onChange={e => setEmail(e.target.value)}/>
+                <TextInput
+                  renderLabel="Password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  type="password"
+                />
+                <TextInput
+                  renderLabel="Password Confirmation"
+                  value={passwordConfirmation}
+                  onChange={e => setPasswordConfirmation(e.target.value)}
+                  type="password"
+                />
+              </FormFieldGroup>
+              <span className="cMIPy_bGBk">
           <span className="bNerA_bGBk bNerA_NmrE bNerA_dBtH bNerA_bBOa bNerA_buDT bNerA_DpxJ">
             <span className="fCrpb_bGBk fCrpb_egrg">Payment Details</span>
           </span>
         </span>
-        <div
-          style={{border: '0.0625rem solid #C7CDD1', borderRadius: '0.25rem', padding: '10px 20px'}}
-        >
-          <CardElement
-            options={{
-              style: {
-                base: {
-                  fontSize: '16px',
-                  color: '#2D3B45',
-                  fontFamily: 'Latoweb, Lato, Helvetica Neue, Helvetica, Arial, sans-serif',
-                  fontWeight: 400
-                }
-              }
-            }}
-          />
+              <div
+                style={{border: '0.0625rem solid #C7CDD1', borderRadius: '0.25rem', padding: '10px 20px'}}
+              >
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: '16px',
+                        color: '#2D3B45',
+                        fontFamily: 'Latoweb, Lato, Helvetica Neue, Helvetica, Arial, sans-serif',
+                        fontWeight: 400
+                      }
+                    }
+                  }}
+                />
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button>Cancel</Button> &nbsp;
+              <Button type="submit" variant="primary">
+                Sign Up
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button>Cancel</Button> &nbsp;
-        <Button type="submit" variant="primary">
-          Sign Up
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  )
+      )
+  }
 }

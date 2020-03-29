@@ -1,6 +1,6 @@
 module OnGuard
   class SignUp
-    attr_reader :user, :complete, :pseudonym
+    attr_reader :user, :complete, :pseudonym, :success
     def initialize(params)
       @params = params
     end
@@ -18,7 +18,7 @@ module OnGuard
         @user.save!
         PseudonymSession.new(@pseudonym).save unless @pseudonym.new_record?
         AccountUser.create user: @user, account: organization.account, role_id: 3  #StudentEnrollment role
-        OnGuard::Payment.new(organization).create_customer(@params[:paymentMethod])
+        @success = OnGuard::Payment.new(organization).create_customer(@params[:paymentMethod])
         return self
     end
     def update
