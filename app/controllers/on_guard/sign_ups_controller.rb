@@ -2,6 +2,8 @@ module OnGuard
   class SignUpsController < ApplicationController
     include Login::Shared
 
+    skip_before_action :verify_authenticity_token
+
     def show_bak
       logout_current_user
       @user = User.new
@@ -12,10 +14,14 @@ module OnGuard
     end
 
     def show
-      #@sign_up = OnGuard::SignUp.new(params).create
-      #successful_login(@sign_up.user, @sign_up.pseudonym, false, false)
       js_bundle :payment_signup
       render html: '<div id="root"></div>'.html_safe, layout: 'bare'
+    end
+
+    def create
+      @sign_up = OnGuard::SignUp.new(params).create
+      successful_login(@sign_up.user, @sign_up.pseudonym, false, false)
+      render json: {sign_up: @sign_up}
     end
 
     def update
