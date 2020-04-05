@@ -1,8 +1,11 @@
 module OnGuard
   class UsersController < ApplicationController
-    before_action :require_user
-    before_action :require_registered_user
-    before_action :load_organization
+
+    include Api::V1::Attachment
+
+    before_action :require_user, :only => 'index'
+    before_action :require_registered_user, :only => 'index'
+    before_action :load_organization, :only => 'index'
 
     def index
       @account = @organization.account
@@ -35,6 +38,12 @@ module OnGuard
                  }
              })
       render html: '', layout: true
+    end
+
+    def import_users
+      api_attachment_preflight(
+          User.last, request
+      )
     end
 
     private

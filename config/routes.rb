@@ -962,6 +962,7 @@ CanvasRails::Application.routes.draw do
     resources :users
     resources :billings
     resource :sign_up
+    post 'import_users' => 'users#import_users', as: 'import_users_upload'
   end
 
   ### API routes ###
