@@ -41,9 +41,15 @@ module OnGuard
     end
 
     def import_users
+      @context = get_context
       api_attachment_preflight(
-          User.last, request
+          User.find(params[:id]), request
       )
+    end
+
+    def import_response
+      @context = get_context
+      render json: OnGuard::Import.new(@context.attachments.not_deleted.find_by_id(params[:file_id]).open).to_json
     end
 
     private

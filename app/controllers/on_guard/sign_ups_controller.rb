@@ -21,7 +21,7 @@ module OnGuard
     def create
       @sign_up = OnGuard::SignUp.new(params).create
       successful_login(@sign_up.user, @sign_up.pseudonym, false, false)
-      render json: {status: @sign_up.success}
+      render json: {status: @sign_up.success, user_id: @sign_Up.user.id}
     end
 
     def update

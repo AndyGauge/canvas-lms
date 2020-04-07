@@ -38,10 +38,11 @@ export default function PaymentSignup() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState('import')
+  const [userId, setUserId] = useState(false)
   const [users, setUsers] = useState([])
   const [newUser, setNewUser] = useState('')
   const [newEmail, setNewEmail] = useState('')
-  const [err, setErr] = useState({});
+  const [err, setErr] = useState({})
   const [fileMessages, setFileMessages] = useState([])
   const [importPreview, setImportPreview] = useState('')
   const stripe = useStripe()
@@ -63,7 +64,8 @@ export default function PaymentSignup() {
       errs.organization = 'Organization is required'
     }
     if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(password)) {
-      errs.password = 'Password must include lowercase and uppercase letters, numbers, and be at least 8 characters long'
+      errs.password =
+        'Password must include lowercase and uppercase letters, numbers, and be at least 8 characters long'
     }
     if (password != passwordConfirmation) {
       errs.confirmation = 'does not match password'
@@ -93,6 +95,7 @@ export default function PaymentSignup() {
           .then(response => response.json())
           .then(data => {
             setStatus(data.status)
+            setUserId(data.user_id)
             setLoading(false)
           })
           .catch(error => {
@@ -101,35 +104,36 @@ export default function PaymentSignup() {
       })
   }
 
-  const handleAddUsers = () => {
-
-  }
-  const handleImport = () => {
-
-  }
+  const handleAddUsers = () => {}
+  const handleImport = () => {}
   const handleDropAccepted = async files => {
-    const uploads = await uploadFiles(files, '/on_guard/import_users')
-    fetch(uploads[0].preview_url).then(response => response.text()).then(text => {
-      setImportPreview(text)
-    })
-
+    const uploads = await uploadFiles(files, '/on_guard/users/'+userId+'import_users')
+    fetch(uploads[0].preview_url)
+      .then(response => response.text())
+      .then(text => {
+        setImportPreview(text)
+      })
   }
   const handleDropRejected = () => {
-    setFileMessages([{
-          text: 'must be .csv',
-          type: 'error'
-        }])
+    setFileMessages([
+      {
+        text: 'must be .csv',
+        type: 'error'
+      }
+    ])
   }
 
   const addUser = () => {
-    const errs={}
+    const errs = {}
     if (newUser.length == 0) {
       errs.newUser = 'Name is required'
     }
     if (!/^\S+@\S+\.\S+$/.test(newEmail)) {
       errs.newEmail = 'Provide a valid E-mail address'
     }
-    const search = users.filter(user => {return user.email === newEmail})
+    const search = users.filter(user => {
+      return user.email === newEmail
+    })
     if (search.length > 0) {
       errs.newEmail = 'Duplicate E-mail'
     }
@@ -192,7 +196,10 @@ export default function PaymentSignup() {
           </Modal.Body>
           <Modal.Footer>
             <Button>Skip</Button> &nbsp;
-            <Button variant="primary" onClick={() => setStatus('import')}>Import</Button>&nbsp;
+            <Button variant="primary" onClick={() => setStatus('import')}>
+              Import
+            </Button>
+            &nbsp;
             <Button type="submit" variant="primary">
               Add Users
             </Button>
@@ -214,28 +221,25 @@ export default function PaymentSignup() {
         >
           <Modal.Body>
             <FileDrop
-              accept='.csv'
+              accept=".csv"
               allowMultiple
               enablePreview
               id="importFile"
               data-testid="input-file-drop"
               label={
                 <Billboard
-                  heading={'Upload File'}
-                  hero={''}
+                  heading="Upload File"
+                  hero=""
                   message={
                     <Flex direction="column">
-                        <Flex.Item>
-                          {'File permitted: .csv'}
-                        </Flex.Item>
+                      <Flex.Item>File permitted: .csv</Flex.Item>
                       <Flex.Item padding="small 0 0">
-                        <Text size="small">
-                          {'Drag and drop, or click to browse your computer'}
-                        </Text>
+                        <Text size="small">Drag and drop, or click to browse your computer</Text>
                       </Flex.Item>
                     </Flex>
                   }
-                /> }
+                />
+              }
               messages={fileMessages}
               onDropAccepted={files => handleDropAccepted(files)}
               onDropRejected={handleDropRejected}
@@ -244,7 +248,10 @@ export default function PaymentSignup() {
           </Modal.Body>
           <Modal.Footer>
             <Button>Skip</Button> &nbsp;
-            <Button variant="primary" onClick={() => setStatus('active')}>Manual Entry</Button>&nbsp;
+            <Button variant="primary" onClick={() => setStatus('active')}>
+              Manual Entry
+            </Button>
+            &nbsp;
             <Button type="submit" variant="primary">
               Add Users
             </Button>
