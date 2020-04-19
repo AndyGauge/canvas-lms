@@ -17,7 +17,7 @@ module OnGuard
       i =  @parsed[0][email_idx] =~ /\S+\@\S+\.\S/ ? 0 : 1
       (i..@parsed.length-1).map do |r|
         {name: @parsed[r][name_idx], email: @parsed[r][email_idx]}
-      end
+      end.to_json
     end
   end
 end

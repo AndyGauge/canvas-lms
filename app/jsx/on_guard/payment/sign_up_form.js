@@ -37,10 +37,10 @@ export default function PaymentSignup() {
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [loading, setLoading] = useState(false)
-  const [status, setStatus] = useState('import')
+  const [status, setStatus] = useState('')
   const [userId, setUserId] = useState(false)
   const [users, setUsers] = useState([])
-  const [newUser, setNewUser] = useState('')
+  const [newName, setnewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [err, setErr] = useState({})
   const [fileMessages, setFileMessages] = useState([])
@@ -104,15 +104,43 @@ export default function PaymentSignup() {
       })
   }
 
-  const handleAddUsers = () => {}
-  const handleImport = () => {}
+  const handleAddUsers = () => {
+    fetch('/on_guard/sign_up/complete', {
+      method: 'post',
+      body: JSON.stringify({
+        users
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => {
+      window.location.href = '/'
+    })
+  }
+
   const handleDropAccepted = async files => {
-    const uploads = await uploadFiles(files, '/on_guard/users/'+userId+'import_users')
-    fetch(uploads[0].preview_url)
-      .then(response => response.text())
-      .then(text => {
-        setImportPreview(text)
+    const uploads = await uploadFiles(files, '/on_guard/users/' + userId + '/import_users')
+    uploads.map(upload => {
+      fetch('/on_guard/users/' + userId + '/import_response/' + upload.id, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
+        .then(response => response.json())
+        .then(data => {
+          const users_update = [...users]
+          data.forEach(user => {
+            if (
+              users_update.filter(u => {
+                return u.email === user.email
+              }).length == 0
+            ) {
+              users_update.push(user)
+            }
+          })
+          setUsers(users_update)
+        })
+    })
   }
   const handleDropRejected = () => {
     setFileMessages([
@@ -125,8 +153,8 @@ export default function PaymentSignup() {
 
   const addUser = () => {
     const errs = {}
-    if (newUser.length == 0) {
-      errs.newUser = 'Name is required'
+    if (newName.length == 0) {
+      errs.newName = 'Name is required'
     }
     if (!/^\S+@\S+\.\S+$/.test(newEmail)) {
       errs.newEmail = 'Provide a valid E-mail address'
@@ -140,11 +168,40 @@ export default function PaymentSignup() {
     if (Object.keys(errs).length > 0) {
       setErr(errs)
     } else {
-      setUsers([...users, {user: newUser, email: newEmail}])
+      setUsers([...users, {name: newName, email: newEmail}])
       setNewEmail('')
-      setNewUser('')
+      setnewName('')
       setErr({})
     }
+  }
+
+  const users_to_import = qty => {
+    switch (qty) {
+      case 0:
+        return ''
+      case 1:
+        return '1 user to import'
+        break
+      default:
+        return qty + ' users to import'
+    }
+  }
+
+  const users_preview = () => {
+    return (
+      <span>
+        <h4>{users_to_import(users.length)}</h4>
+        <ul>
+          {users.slice(-4).map(user => {
+            return (
+              <li key={user}>
+                {user.name} &lt;{user.email}&gt;
+              </li>
+            )
+          })}
+        </ul>
+      </span>
+    )
   }
 
   switch (status) {
@@ -157,42 +214,29 @@ export default function PaymentSignup() {
           as="form"
           onSubmit={handleAddUsers}
           open
-          size="large"
+          size="small"
           label="Add Users"
           shouldCloseOnDocumentClick={false}
         >
           <Modal.Body>
-            <FormFieldGroup layout="columns" rowSpacing="small" description="">
-              <Grid.Col width="auto">
-                <TextInput
-                  renderLabel="Name"
-                  value={newUser}
-                  onChange={e => setNewUser(e.target.value)}
-                  messages={err.newUser && [{type: 'error', text: err.newUser}]}
-                />
-              </Grid.Col>
-              <Grid.Col width="auto">
-                <TextInput
-                  renderLabel="Email"
-                  value={newEmail}
-                  onChange={e => setNewEmail(e.target.value)}
-                  messages={err.newEmail && [{type: 'error', text: err.newEmail}]}
-                />
-              </Grid.Col>
-              <Grid.Col width="auto">
-                <div style={{marginBottom: '10px'}}>&nbsp;</div>
-                <Button onClick={addUser}>＋</Button>
-              </Grid.Col>
-              <Grid.Col width="auto" className="button-fill-vertical">
-                {users.slice(-4).map(user => {
-                  return (
-                    <div key={user}>
-                      {user.user} &lt;{user.email}&gt;
-                    </div>
-                  )
-                })}
-              </Grid.Col>
+            <FormFieldGroup rowSpacing="small" description="">
+              <TextInput
+                renderLabel="Name"
+                value={newName}
+                onChange={e => setnewName(e.target.value)}
+                messages={err.newName && [{type: 'error', text: err.newName}]}
+              />
+
+              <TextInput
+                renderLabel="Email"
+                value={newEmail}
+                onChange={e => setNewEmail(e.target.value)}
+                messages={err.newEmail && [{type: 'error', text: err.newEmail}]}
+              />
+
+              <Button onClick={addUser}>＋ Add User</Button>
             </FormFieldGroup>
+            <div>{users_preview()}</div>
           </Modal.Body>
           <Modal.Footer>
             <Button>Skip</Button> &nbsp;
@@ -213,7 +257,7 @@ export default function PaymentSignup() {
       return (
         <Modal
           as="form"
-          onSubmit={handleImport}
+          onSubmit={handleAddUsers}
           open
           size="small"
           label="Import Users"
@@ -229,7 +273,6 @@ export default function PaymentSignup() {
               label={
                 <Billboard
                   heading="Upload File"
-                  hero=""
                   message={
                     <Flex direction="column">
                       <Flex.Item>File permitted: .csv</Flex.Item>
@@ -244,7 +287,7 @@ export default function PaymentSignup() {
               onDropAccepted={files => handleDropAccepted(files)}
               onDropRejected={handleDropRejected}
             />
-            <div dangerouslySetInnerHTML={{__html: importPreview}} />
+            {users_preview()}
           </Modal.Body>
           <Modal.Footer>
             <Button>Skip</Button> &nbsp;
@@ -267,7 +310,7 @@ export default function PaymentSignup() {
           <div className="loading-spinner">
             <ClimbingBoxLoader
               size={20}
-              color="#D7B236"
+              color="#e76800"
               loading={loading}
               css={`
                 display: block;
@@ -324,7 +367,7 @@ export default function PaymentSignup() {
                   messages={err.confirmation && [{type: 'error', text: err.confirmation}]}
                 />
               </FormFieldGroup>
-              <span className="cMIPy_bGBk">
+              <span className="cMIPy_bGBk" style={{marginTop: 10}}>
                 <span className="bNerA_bGBk bNerA_NmrE bNerA_dBtH bNerA_bBOa bNerA_buDT bNerA_DpxJ">
                   <span className="fCrpb_bGBk fCrpb_egrg">Payment Details</span>
                 </span>

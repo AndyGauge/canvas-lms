@@ -3,7 +3,7 @@ module OnGuard
 
     include Api::V1::Attachment
 
-    before_action :require_user, :only => 'index'
+    before_action :require_user, :only => [ 'index', 'import_response' ]
     before_action :require_registered_user, :only => 'index'
     before_action :load_organization, :only => 'index'
 
@@ -41,15 +41,15 @@ module OnGuard
     end
 
     def import_users
-      @context = get_context
+     user = User.find(params[:id])
+
       api_attachment_preflight(
-          User.find(params[:id]), request
+          user, request
       )
     end
 
     def import_response
-      @context = get_context
-      render json: OnGuard::Import.new(@context.attachments.not_deleted.find_by_id(params[:file_id]).open).to_json
+      render plain: OnGuard::Import.new(User.find(params[:id]).attachments.not_deleted.find_by_id(params[:response_id]).open).to_json
     end
 
     private
