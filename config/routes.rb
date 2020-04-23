@@ -961,7 +961,9 @@ CanvasRails::Application.routes.draw do
   namespace :on_guard do
     resources :users
     resources :billings
-    resource :sign_up
+    resource :sign_up do
+      post 'complete', on: :collection
+    end
     post 'users/:id/import_users' => 'users#import_users', as: 'on_guard_import_users_upload'
     get 'users/:id/import_response/:response_id' => 'users#import_response', as: 'on_guard_import_response'
   end

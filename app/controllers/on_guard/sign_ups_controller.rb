@@ -31,6 +31,11 @@ module OnGuard
       end
     end
 
+    def complete
+      @current_user.on_guard_organization.invite_users(params[:users])
+      render json: {status: 'ok'}
+    end
+
     private
 
   end

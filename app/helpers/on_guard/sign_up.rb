@@ -5,21 +5,23 @@ module OnGuard
       @params = params
     end
     def create
-        @user = User.create!
-        @user.update!(@params.require(:user).permit(
-            :name,
-            :email
-        ))
+      cc_addr =@params[:user][:email]
+      if EmailAddressValidator.valid?(cc_addr)
+        @user = User.create!(@params.require( :user ).permit( :name ))
         organization = @user.create_on_guard_organization! name: @params[:organization]
         @user.create_on_guard_supervisor! on_guard_organization: organization
         @user.workflow_state='registered'
-        @pseudonym = @user.create_pseudonym(unique_id: @user.email, password: @params[:password], password_confirmation: @params[:passwordConfirmation], workflow_state: 'active')
+        @pseudonym = @user.create_pseudonym(unique_id: cc_addr, password: @params[:password], password_confirmation: @params[:passwordConfirmation], workflow_state: 'active')
         @user.accept_terms
+        @user.communication_channels.build(:path_type => CommunicationChannel::TYPE_EMAIL, :path => cc_addr)
         @user.save!
         PseudonymSession.new(@pseudonym).save unless @pseudonym.new_record?
         AccountUser.create user: @user, account: organization.account, role_id: 3  #StudentEnrollment role
         @success = OnGuard::Payment.new(organization).create_customer(@params[:paymentMethod])
         return self
+      else
+        raise 'Invalid Email'
+      end
     end
     def update
       if @params[:billing]

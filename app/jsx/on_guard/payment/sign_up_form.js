@@ -105,17 +105,21 @@ export default function PaymentSignup() {
   }
 
   const handleAddUsers = () => {
+    setLoading(true)
+    let users_to_send = [...users]
+    if (/^\S+@\S+\.\S+$/.test(newEmail)) {
+      users_to_send.push({name: newName, email: newEmail})
+    }
     fetch('/on_guard/sign_up/complete', {
       method: 'post',
       body: JSON.stringify({
-        users
+        users_to_send
       }),
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(response => {
-      window.location.href = '/'
     })
+    setTimeout(function(){document.location.href = "/";},250);
   }
 
   const handleDropAccepted = async files => {
@@ -133,7 +137,7 @@ export default function PaymentSignup() {
             if (
               users_update.filter(u => {
                 return u.email === user.email
-              }).length == 0
+              }).length === 0
             ) {
               users_update.push(user)
             }
