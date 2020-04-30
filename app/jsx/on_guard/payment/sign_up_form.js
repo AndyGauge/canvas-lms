@@ -106,7 +106,7 @@ export default function PaymentSignup() {
 
   const handleAddUsers = () => {
     setLoading(true)
-    let users_to_send = [...users]
+    const users_to_send = [...users]
     if (/^\S+@\S+\.\S+$/.test(newEmail)) {
       users_to_send.push({name: newName, email: newEmail})
     }
@@ -119,7 +119,13 @@ export default function PaymentSignup() {
         'Content-Type': 'application/json'
       }
     })
-    setTimeout(function(){document.location.href = "/";},250);
+    goHome()
+  }
+
+  const goHome = () => {
+    setTimeout(function() {
+      document.location.href = '/'
+    }, 250)
   }
 
   const handleDropAccepted = async files => {
@@ -221,6 +227,7 @@ export default function PaymentSignup() {
           size="small"
           label="Add Users"
           shouldCloseOnDocumentClick={false}
+          onDismiss={goHome}
         >
           <Modal.Body>
             <FormFieldGroup rowSpacing="small" description="">
@@ -243,7 +250,7 @@ export default function PaymentSignup() {
             <div>{users_preview()}</div>
           </Modal.Body>
           <Modal.Footer>
-            <Button>Skip</Button> &nbsp;
+            <Button onClick={goHome}>Skip</Button> &nbsp;
             <Button variant="primary" onClick={() => setStatus('import')}>
               Import
             </Button>
@@ -266,6 +273,7 @@ export default function PaymentSignup() {
           size="small"
           label="Import Users"
           shouldCloseOnDocumentClick={false}
+          onDismiss={goHome}
         >
           <Modal.Body>
             <FileDrop
@@ -294,7 +302,7 @@ export default function PaymentSignup() {
             {users_preview()}
           </Modal.Body>
           <Modal.Footer>
-            <Button>Skip</Button> &nbsp;
+            <Button onClick={goHome}>Skip</Button> &nbsp;
             <Button variant="primary" onClick={() => setStatus('active')}>
               Manual Entry
             </Button>
@@ -334,6 +342,7 @@ export default function PaymentSignup() {
             size="small"
             label="Sign Up"
             shouldCloseOnDocumentClick={false}
+            onDismiss={goHome}
           >
             <Modal.Body>
               <FormFieldGroup layout="stacked" rowSpacing="small" description="">
@@ -398,7 +407,7 @@ export default function PaymentSignup() {
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button>Cancel</Button> &nbsp;
+              <Button onClick={goHome}>Cancel</Button> &nbsp;
               <Button type="submit" variant="primary">
                 Sign Up
               </Button>

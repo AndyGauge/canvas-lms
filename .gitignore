@@ -88,3 +88,6 @@ coverage-karma
 
 # generated graphql schema
 schema.graphql
+
+#secret
+aws.sh
