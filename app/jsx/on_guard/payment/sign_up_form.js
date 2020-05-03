@@ -42,7 +42,8 @@ export default function PaymentSignup() {
   const [users, setUsers] = useState([])
   const [newName, setnewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
-  const [err, setErr] = useState({})
+  const [err, setErr] = useState({stripeError: 'Payment Card required'})
+  const [showValidation, setShowValidation] = useState(false)
   const [fileMessages, setFileMessages] = useState([])
   const [importPreview, setImportPreview] = useState('')
   const stripe = useStripe()
@@ -51,6 +52,8 @@ export default function PaymentSignup() {
   const handleSignup = async event => {
     event.preventDefault()
     const errs = {}
+    if (err.stripeError) { errs.stripeError = err.stripeError };
+    setShowValidation(true)
     if (!stripe || !elements) {
       return
     }
@@ -67,41 +70,60 @@ export default function PaymentSignup() {
       errs.password =
         'Password must include lowercase and uppercase letters, numbers, and be at least 8 characters long'
     }
-    if (password != passwordConfirmation) {
-      errs.confirmation = 'does not match password'
+    if (password != passwordConfirmation || errs.password) {
+      errs.confirmation = 'Passwords must match'
     }
     const cardElement = elements.getElement('card')
-    stripe
-      .createPaymentMethod({
-        type: 'card',
-        card: cardElement,
-        billing_details: {name}
-      })
-      .then(({paymentMethod}) => {
-        setLoading(true)
-        fetch('/on_guard/sign_up/', {
-          method: 'post',
-          body: JSON.stringify({
-            user: {name, email},
-            organization,
-            password,
-            passwordConfirmation,
-            paymentMethod
-          }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
+    if (Object.keys(errs).length > 0) {
+      setErr(errs)
+    } else {
+      stripe
+        .createPaymentMethod({
+          type: 'card',
+          card: cardElement,
+          billing_details: {name}
         })
-          .then(response => response.json())
-          .then(data => {
-            setStatus(data.status)
-            setUserId(data.user_id)
-            setLoading(false)
+        .then(({paymentMethod}) => {
+          setLoading(true)
+          fetch('/on_guard/sign_up/', {
+            method: 'post',
+            body: JSON.stringify({
+              user: {name, email},
+              organization,
+              password,
+              passwordConfirmation,
+              paymentMethod
+            }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
           })
-          .catch(error => {
-            setStatus('error')
-          })
-      })
+            .then(response => response.json())
+            .then(data => {
+              setStatus(data.status)
+              setUserId(data.user_id)
+              setLoading(false)
+            })
+            .catch(error => {
+              setStatus('error')
+            })
+        })
+    }
+  }
+
+  const handleCardElementChange = (e) => {
+
+    const errs = err
+
+    if (e.error) {
+      console.log(e.error)
+      errs.stripeError = e.error.message
+    } else if(e.empty) {
+      errs.stripeError = 'Payment Card required'
+    } else {
+      delete errs.stripeError
+    }
+    setErr(errs)
   }
 
   const handleAddUsers = () => {
@@ -386,7 +408,11 @@ export default function PaymentSignup() {
                 </span>
               </span>
               <div
-                style={{
+                style={(showValidation && err.stripeError) ? {
+                  border: '0.0625rem solid #EE0612',
+                  borderRadius: '0.25rem',
+                  padding: '10px 20px'
+                } : {
                   border: '0.0625rem solid #C7CDD1',
                   borderRadius: '0.25rem',
                   padding: '10px 20px'
@@ -403,7 +429,11 @@ export default function PaymentSignup() {
                       }
                     }
                   }}
+                  onChange={handleCardElementChange}
                 />
+              </div>
+              <div className={'bVlfD_ddvR bVlfD_bGBk'}>
+                {showValidation && err.stripeError}
               </div>
             </Modal.Body>
             <Modal.Footer>
