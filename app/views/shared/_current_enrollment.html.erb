@@ -72,7 +72,7 @@
       </td>
 
       <td class="course-list-no-left-border course-list-nickname-column">
-        <%= current_enrollment.course.nickname_for(@current_user, nil) %>
+        <%= current_enrollment.course.auto_assigned %>
       </td>
 
       <td class="course-list-no-left-border course-list-term-column">
@@ -83,19 +83,7 @@
       <% end %>
       </td>
 
-      <td class="course-list-no-left-border course-list-enrolled-as-column">
-        <%= current_enrollment.readable_role_name %>
-      </td>
 
-      <td class="course-list-no-left-border course-list-published-column ">
-        <% if current_enrollment.course.created? || current_enrollment.course.claimed? %>
-            <span data-tooltip title="<%= t('unpublished_course_tooltip', "This course has not been published. Students should contact the course instructor for access.") %>"><%= t('unpublished_course', "No") %></span>
-             <span class="screenreader-only"><%= t('unpublished_course_tooltip', "This course has not been published. Students should contact the course instructor for access.") %></span>
-        <% else %>
-            <span data-tooltip title="<%= t('published_course_tooltip', "This course has been published.") %>"><%= t('published_course', "Yes") %></span>
-             <span class="screenreader-only"><%= t('published_course_tooltip', "This course has been published.") %></span>
-        <% end %>
-      </td>
 
 <% end %>
 <% unless dashboard %>
