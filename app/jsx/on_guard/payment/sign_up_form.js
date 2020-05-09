@@ -106,6 +106,7 @@ export default function PaymentSignup() {
             })
             .catch(error => {
               setStatus('error')
+              setErr(error)
             })
         })
     }
@@ -332,6 +333,29 @@ export default function PaymentSignup() {
             <Button type="submit" variant="primary">
               Add Users
             </Button>
+          </Modal.Footer>
+        </Modal>
+      )
+    case 'error':
+      /**
+       Add additional users, step 2
+       */
+      return (
+        <Modal
+          as="form"
+          open
+          size="small"
+          label="Errors Enrolling"
+          shouldCloseOnDocumentClick={false}
+          onDismiss={goHome}
+        >
+          <Modal.Body>
+            <p>Our Support Team would like to get hold of you and resolve the errors on signing up</p>
+            <p>Please send an E-mail to <a href={"mailto:support@on-guard.org"}>support@on-guard.org</a> and we will help you get set up.</p>
+            <p>Sorry for the inconvenience</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={goHome}>Login or start over</Button>
           </Modal.Footer>
         </Modal>
       )
