@@ -956,6 +956,18 @@ CanvasRails::Application.routes.draw do
   get 'terms_of_use' => 'legal_information#terms_of_use', as: 'terms_of_use_redirect'
   get 'privacy_policy' => 'legal_information#privacy_policy', as: 'privacy_policy_redirect'
 
+  ### On Guard ###
+
+  namespace :on_guard do
+    resources :users
+    resources :billings
+    resource :sign_up do
+      post 'complete', on: :collection
+    end
+    post 'users/:id/import_users' => 'users#import_users', as: 'on_guard_import_users_upload'
+    get 'users/:id/import_response/:response_id' => 'users#import_response', as: 'on_guard_import_response'
+  end
+
   ### API routes ###
 
   # TODO: api routes can't yet take advantage of concerns for DRYness, because of

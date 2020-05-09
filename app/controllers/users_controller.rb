@@ -382,6 +382,7 @@ class UsersController < ApplicationController
       respond_to do |format|
         if @users.length == 1 && params[:term]
           format.html {
+
             redirect_to(named_context_url(@context, :context_user_url, @users.first))
           }
         else
@@ -432,7 +433,7 @@ class UsersController < ApplicationController
   # @returns [User]
   def api_index
     get_context
-    return unless authorized_action(@context, @current_user, :read_roster)
+    return unless authorized_action(@context, @current_user, :read_roster) || @current_user.on_guard_supervisor
     search_term = params[:search_term].presence
     page_opts = {}
     if search_term
@@ -2559,9 +2560,10 @@ class UsersController < ApplicationController
   def require_self_registration
     get_context
     @context = @domain_root_account || Account.default unless @context.is_a?(Account)
-    @context = @context.root_account
+    @root = @context.root_account
     unless @context.grants_right?(@current_user, session, :manage_user_logins) ||
-        @context.self_registration_allowed_for?(params[:user] && params[:user][:initial_enrollment_type])
+        @root.self_registration_allowed_for?(params[:user] && params[:user][:initial_enrollment_type]) ||
+        @current_user.on_guard_supervisor&.on_guard_organization.account == @context
       flash[:error] = t('no_self_registration', "Self registration has not been enabled for this account")
       respond_to do |format|
         format.html { redirect_to root_url }
@@ -2764,9 +2766,9 @@ class UsersController < ApplicationController
       end
 
       @user.attributes = user_params
-      accepted_terms = params[:user].delete(:terms_of_use)
-      @user.accept_terms if value_to_boolean(accepted_terms)
-      includes << "terms_of_use" unless accepted_terms.nil?
+      #accepted_terms = params[:user].delete(:terms_of_use)
+      #@user.accept_terms = false
+      #includes << "terms_of_use" unless accepted_terms.nil?
     end
     @user.name ||= params[:pseudonym][:unique_id]
     skip_registration = value_to_boolean(params[:user].try(:[], :skip_registration))

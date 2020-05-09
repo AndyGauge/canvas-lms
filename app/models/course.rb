@@ -3481,6 +3481,8 @@ class Course < ActiveRecord::Base
     feature_enabled?(:new_gradebook) && PostPolicy.feature_enabled?
   end
 
+
+
   private
 
   def effective_due_dates

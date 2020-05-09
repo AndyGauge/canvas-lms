@@ -123,7 +123,7 @@ class Pseudonym < ActiveRecord::Base
   end
 
   def must_be_root_account
-    if account_id_changed?
+    if account_id_changed? && false
       self.errors.add(:account_id, "must belong to a root_account") unless self.account_id == self.root_account_id
     end
   end
