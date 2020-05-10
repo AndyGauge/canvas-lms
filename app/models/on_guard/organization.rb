@@ -4,7 +4,7 @@ module OnGuard
     has_many :supervisors, :foreign_key => 'on_guard_organization_id'
     has_many :addresses, :foreign_key => 'on_guard_organization_id'
     belongs_to :account
-    ROOT_ACCOUNT = Account.find(1)
+    ROOT_ACCOUNT = Account.find_by_id(1)
 
     before_create :generate_account
 
@@ -21,6 +21,8 @@ module OnGuard
         end
       end
     end
+
+
 
     private
     def generate_account
