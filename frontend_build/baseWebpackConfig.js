@@ -29,6 +29,7 @@ const path = require('path')
 const webpack = require('webpack')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const StatsWriterPlugin = require('webpack-stats-plugin').StatsWriterPlugin
+const FilterWarningsPlugin = require('webpack-filter-warnings-plugin')
 const BundleExtensionsPlugin = require('./BundleExtensionsPlugin')
 const ClientAppsPlugin = require('./clientAppPlugin')
 const CompiledReferencePlugin = require('./CompiledReferencePlugin')
@@ -300,6 +301,9 @@ module.exports = {
         }
       })
     },
+    new FilterWarningsPlugin({
+      exclude: /Critical dependency: the request of a dependency is an expression/
+    }),
 
     // sets these environment variables in compiled code.
     // process.env.NODE_ENV will make it so react and others are much smaller and don't run their

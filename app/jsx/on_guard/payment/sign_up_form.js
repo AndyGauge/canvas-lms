@@ -52,7 +52,9 @@ export default function PaymentSignup() {
   const handleSignup = async event => {
     event.preventDefault()
     const errs = {}
-    if (err.stripeError) { errs.stripeError = err.stripeError };
+    if (err.stripeError) {
+      errs.stripeError = err.stripeError
+    }
     setShowValidation(true)
     if (!stripe || !elements) {
       return
@@ -112,14 +114,13 @@ export default function PaymentSignup() {
     }
   }
 
-  const handleCardElementChange = (e) => {
-
+  const handleCardElementChange = e => {
     const errs = err
 
     if (e.error) {
       console.log(e.error)
       errs.stripeError = e.error.message
-    } else if(e.empty) {
+    } else if (e.empty) {
       errs.stripeError = 'Payment Card required'
     } else {
       delete errs.stripeError
@@ -350,8 +351,14 @@ export default function PaymentSignup() {
           onDismiss={goHome}
         >
           <Modal.Body>
-            <p>Our Support Team would like to get hold of you and resolve the errors on signing up</p>
-            <p>Please send an E-mail to <a href={"mailto:support@on-guard.org"}>support@on-guard.org</a> and we will help you get set up.</p>
+            <p>
+              Our Support Team would like to get hold of you and resolve the errors on signing up
+            </p>
+            <p>
+              Please send an E-mail to{' '}
+              <a href="mailto:support@on-guard.org">support@on-guard.org</a> and we will help you
+              get set up.
+            </p>
             <p>Sorry for the inconvenience</p>
           </Modal.Body>
           <Modal.Footer>
@@ -432,15 +439,19 @@ export default function PaymentSignup() {
                 </span>
               </span>
               <div
-                style={(showValidation && err.stripeError) ? {
-                  border: '0.0625rem solid #EE0612',
-                  borderRadius: '0.25rem',
-                  padding: '10px 20px'
-                } : {
-                  border: '0.0625rem solid #C7CDD1',
-                  borderRadius: '0.25rem',
-                  padding: '10px 20px'
-                }}
+                style={
+                  showValidation && err.stripeError
+                    ? {
+                        border: '0.0625rem solid #EE0612',
+                        borderRadius: '0.25rem',
+                        padding: '10px 20px'
+                      }
+                    : {
+                        border: '0.0625rem solid #C7CDD1',
+                        borderRadius: '0.25rem',
+                        padding: '10px 20px'
+                      }
+                }
               >
                 <CardElement
                   options={{
@@ -456,9 +467,7 @@ export default function PaymentSignup() {
                   onChange={handleCardElementChange}
                 />
               </div>
-              <div className={'bVlfD_ddvR bVlfD_bGBk'}>
-                {showValidation && err.stripeError}
-              </div>
+              <div className="bVlfD_ddvR bVlfD_bGBk">{showValidation && err.stripeError}</div>
             </Modal.Body>
             <Modal.Footer>
               <Button onClick={goHome}>Cancel</Button> &nbsp;
