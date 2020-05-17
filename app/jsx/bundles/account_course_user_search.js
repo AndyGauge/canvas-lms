@@ -26,7 +26,8 @@ import initialState from '../account_course_user_search/store/initialState'
 import ready from '@instructure/ready'
 
 // eg: '/accounts/xxx' for anything like '/accounts/xxx/whatever`
-initialState.tabList.basePath = window.location.pathname.match(/.*accounts\/[^/]*/)[0]
+const account_path_match = window.location.pathname.match(/.*accounts\/[^/]*/)
+initialState.tabList.basePath = account_path_match ? account_path_match[0] : 'users'
 
 // Note. Only the UsersPane/Tab is using a redux store. The courses tab is
 // still using the old store model. That is why this might seem kind of weird.

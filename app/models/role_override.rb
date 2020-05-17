@@ -763,6 +763,7 @@ class RoleOverride < ActiveRecord::Base
           'AccountMembership'
         ],
         :true_for => [
+          'StudentEnrollment',
           'TaEnrollment',
           'TeacherEnrollment',
           'AccountAdmin'

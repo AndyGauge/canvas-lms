@@ -37,7 +37,7 @@
 
 <div id="dashboard" class="ic-dashboard-app">
   <%= render :partial => 'shared/dashboard_invitation', :collection => @pending_invitations %>
-  <%= render :partial => 'shared/dashboard_messages' %>
+  <%# ignore user dashboard messages = render :partial => 'shared/dashboard_messages' %>
 
   <div id="dashboard_header_container" class="ic-Dashboard-header">
     <h1 class="ic-Dashboard-header__title hidden-phone"><%= t "Dashboard" %></h1>

@@ -204,6 +204,12 @@
           <% end %>
         </td>
       </tr><tr>
+        <td class="form-label"> Auto Assign:</td>
+        <td>
+          <%= f.check_box :auto_assigned %>
+          <%= f.label "All users will be enrolled in course during sign-up" %>
+        </td>
+      </tr><tr>
         <td class="form-label"><%= f.blabel :enrollment_term_id, :en => "Term" %></td>
         <td>
           <% if can_manage && can_do(@context.account, @current_user, :manage_courses) %>

@@ -62,6 +62,8 @@ class FilePreviewsController < ApplicationController
       # html files
       elsif @file.content_type == 'text/html'
         return redirect_to context_url(@context, :context_file_preview_url, @file.id)
+      elsif @file.content_type == 'text/csv'
+        return render template: 'file_previews/csv_preview', layout: false
       # no preview available
       else
         @accessed_asset = nil # otherwise it will double-log when they download the file
