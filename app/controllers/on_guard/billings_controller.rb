@@ -9,6 +9,14 @@ module OnGuard
       render html: '<div id="root"></div>'.html_safe, layout:'application'
     end
 
+    def stripe
+      render plain: Stripe::Customer.retrieve({ id: @current_user.on_guard_organization.stripe_customer_id })
+    end
+
+    def invoice
+      render plain: Stripe::Invoice.list({customer: @current_user.on_guard_organization.stripe_customer_id })
+    end
+
     private
     def load_organization
       @organization = @current_user.on_guard_organization
