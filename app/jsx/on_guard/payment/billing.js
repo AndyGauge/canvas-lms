@@ -29,21 +29,22 @@ class PaymentBilling extends Component {
     this.state = {
       stripe: {},
       invoices: []
-    };
-
+    }
   }
+
   componentDidMount() {
-    this.fetchController = new AbortController();
+    this.fetchController = new AbortController()
     const signal = this.fetchController.signal
     fetch('/on_guard/billing/stripe', {signal})
-      .then( response => response.json() )
-      .then( stripe => this.setState({stripe}))
-    fetch('/on_guard/billing/invoice',{signal})
-      .then( response => response.json() )
-      .then( invoice => this.setState({invoices: invoice.data}))
+      .then(response => response.json())
+      .then(stripe => this.setState({stripe}))
+    fetch('/on_guard/billing/invoice', {signal})
+      .then(response => response.json())
+      .then(invoice => this.setState({invoices: invoice.data}))
   }
+
   onTabChanged = (newIndex, oldIndex) => {
-   /* if (newIndex === oldIndex) return
+    /* if (newIndex === oldIndex) return
     const newContextType = newIndex === COURSE_TAB_INDEX ? COURSE : ACCOUNT
     this.props.filterRoles({
       selectedRoles: [{value: ALL_ROLES_VALUE, label: ALL_ROLES_LABEL}],
@@ -58,16 +59,17 @@ class PaymentBilling extends Component {
       () => {
         this.props.tabChanged(newContextType)
       }
-    )*/
+    ) */
   }
+
   render() {
     let ending_date
     let quantity
-    if (this.state.stripe.subscriptions && this.state.stripe.subscriptions.data[0])
-    {
-      ending_date = new Date( this.state.stripe.subscriptions.data[0].current_period_end * 1000).toLocaleDateString('en-us')
+    if (this.state.stripe.subscriptions && this.state.stripe.subscriptions.data[0]) {
+      ending_date = new Date(
+        this.state.stripe.subscriptions.data[0].current_period_end * 1000
+      ).toLocaleDateString('en-us')
       quantity = this.state.stripe.subscriptions.data[0].items.data[0].quantity
-
     }
 
     return (
@@ -76,46 +78,34 @@ class PaymentBilling extends Component {
           <h1>Billing</h1>
         </ScreenReaderContent>
         <TabList onChange={this.onTabChanged}>
-          <TabList.Panel title={'Summary'}>
+          <TabList.Panel title="Summary">
             On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed.
-
-
           </TabList.Panel>
-          <TabList.Panel title={'History'}>
-            <Table
-              margin="small 0"
-              caption={<ScreenReaderContent></ScreenReaderContent>}
-            >
+          <TabList.Panel title="History">
+            <Table margin="small 0" caption={<ScreenReaderContent />}>
               <thead>
-              <tr>
-                <td>Date</td>
-                <td>Amount</td>
-                <td>Download</td>
-              </tr>
+                <tr>
+                  <td>Date</td>
+                  <td>Amount</td>
+                  <td>Download</td>
+                </tr>
               </thead>
               <tbody>
-              {this.state.invoices.map(invoice => {
-                return(
-                  <tr>
+                {this.state.invoices.map(invoice => (
+                  <tr key={invoice.id}>
                     <td>{new Date(invoice.created * 1000).toLocaleDateString('en-us')}</td>
-                    <td> $ {invoice.amount_paid/100}</td>
-                    <td><a href="#">PDF</a></td>
-
+                    <td> $ {invoice.amount_paid / 100}</td>
+                    <td>
+                      <a href={invoice.invoice_pdf}><img src={'/images/onguard/invoice.png'} style={{height: 32, width: 32}}/></a>
+                    </td>
                   </tr>
-                  )
-              })}
+                ))}
               </tbody>
-
             </Table>
           </TabList.Panel>
-          <TabList.Panel title={'Payment Method'}>
-
-          </TabList.Panel>
+          <TabList.Panel title="Payment Method" />
         </TabList>
-
-
       </div>
-
     )
   }
 }
