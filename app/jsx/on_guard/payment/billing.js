@@ -27,8 +27,11 @@ class PaymentBilling extends Component {
     super(props)
 
     this.state = {
-      stripe: {},
-      invoices: []
+      subscription: {},
+      item: {},
+      invoices: [],
+      end_of_month: "",
+      users_not_invoiced_count: 0,
     }
   }
 
@@ -37,10 +40,14 @@ class PaymentBilling extends Component {
     const signal = this.fetchController.signal
     fetch('/on_guard/billing/stripe', {signal})
       .then(response => response.json())
-      .then(stripe => this.setState({stripe}))
-    fetch('/on_guard/billing/invoice', {signal})
-      .then(response => response.json())
-      .then(invoice => this.setState({invoices: invoice.data}))
+      .then(striperes => this.setState({
+          subscription: JSON.parse(striperes['subscription']),
+          item: JSON.parse(striperes['item']),
+          invoices: JSON.parse(striperes['invoices']),
+          end_of_month: striperes['end_of_month'],
+          users_not_invoiced_count: striperes['users_not_invoiced_count']
+        })
+      )
   }
 
   onTabChanged = (newIndex, oldIndex) => {
@@ -65,11 +72,11 @@ class PaymentBilling extends Component {
   render() {
     let ending_date
     let quantity
-    if (this.state.stripe.subscriptions && this.state.stripe.subscriptions.data[0]) {
+    if (this.state.subscription) {
       ending_date = new Date(
-        this.state.stripe.subscriptions.data[0].current_period_end * 1000
+        this.state.subscription.current_period_end * 1000
       ).toLocaleDateString('en-us')
-      quantity = this.state.stripe.subscriptions.data[0].items.data[0].quantity
+      quantity = this.state.item.quantity
     }
 
     return (
@@ -79,7 +86,10 @@ class PaymentBilling extends Component {
         </ScreenReaderContent>
         <TabList onChange={this.onTabChanged}>
           <TabList.Panel title="Summary">
-            On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed.
+            <p>On Guard bills $1 when you sign up, that covers your security training.</p>
+            <p>Add users at any time.  We charge for those users at the end of every month</p>
+            <p>On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed.</p>
+            <p>On {this.state.end_of_month}, {this.state.users_not_invoiced_count} new users will be invoiced.</p>
           </TabList.Panel>
           <TabList.Panel title="History">
             <Table margin="small 0" caption={<ScreenReaderContent />}>
@@ -96,7 +106,9 @@ class PaymentBilling extends Component {
                     <td>{new Date(invoice.created * 1000).toLocaleDateString('en-us')}</td>
                     <td> $ {invoice.amount_paid / 100}</td>
                     <td>
-                      <a href={invoice.invoice_pdf}><img src={'/images/onguard/invoice.png'} style={{height: 32, width: 32}}/></a>
+                      <a href={invoice.invoice_pdf}>
+                        <img src="/images/onguard/invoice.png" style={{height: 32, width: 32}} />
+                      </a>
                     </td>
                   </tr>
                 ))}

@@ -10,7 +10,9 @@ module OnGuard
     def index
       @account = @organization.account
       js_env({
-                 COURSE_ROLES: Role.course_role_data_for_account(@account, @current_user)
+                 COURSE_ROLES: Role.course_role_data_for_account(@account, @current_user),
+                 USERS_NOT_INVOICED: @organization.not_invoiced_users,
+                 END_OF_MONTH: Date.today.end_of_month
              })
       js_bundle :on_guard_users
       css_bundle :addpeople

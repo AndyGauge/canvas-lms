@@ -2766,6 +2766,8 @@ class UsersController < ApplicationController
       end
 
       @user.attributes = user_params
+      #Is it possible that the logged in user would be in a different organization, maybe ROOT account
+      @user.on_guard_organization = @current_user.on_guard_organization
       #accepted_terms = params[:user].delete(:terms_of_use)
       #@user.accept_terms = false
       #includes << "terms_of_use" unless accepted_terms.nil?

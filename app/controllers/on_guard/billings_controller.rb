@@ -10,11 +10,14 @@ module OnGuard
     end
 
     def stripe
-      render plain: Stripe::Customer.retrieve({ id: @current_user.on_guard_organization.stripe_customer_id })
-    end
-
-    def invoice
-      render plain: Stripe::Invoice.list({customer: @current_user.on_guard_organization.stripe_customer_id })
+      customer = Stripe::Customer.retrieve({ id: @current_user.on_guard_organization.stripe_customer_id })
+      render plain: {
+            "subscription" => customer.subscriptions.data.max.to_json,
+            "item" => customer.subscriptions.data.max.items.data.max.to_json,
+            "invoices" => Stripe::Invoice.list({customer: @current_user.on_guard_organization.stripe_customer_id }).data.to_json,
+            "end_of_month" => Date.today.end_of_month,
+            "users_not_invoiced_count" => @organization.not_invoiced_users.count
+        }.to_json
     end
 
     private
