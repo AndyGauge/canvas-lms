@@ -18,10 +18,10 @@ module OnGuard
       invoice_thread = Thread.new { Stripe::Invoice.list({customer: customer_id }) }
       card_thread = Thread.new { Stripe::PaymentMethod.retrieve({id: customer.invoice_settings.default_payment_method }) }
       render plain: {
-            "subscription" => customer.subscriptions.data.max.to_json,
-            "item" => customer.subscriptions.data.max.items.data.max.to_json,
-            "invoices" => invoice_thread.value.data.to_json,
-            "card" => card_thread.value.card.to_json,
+            "subscription" => customer.subscriptions.data.max,
+            "item" => customer.subscriptions.data.max.items.data.max,
+            "invoices" => invoice_thread.value.data,
+            "card" => card_thread.value.card,
             "end_of_month" => Date.today.end_of_month,
             "users_not_invoiced_count" => @organization.not_invoiced_users.count
         }.to_json
@@ -47,7 +47,7 @@ module OnGuard
     private
     def load_organization
       @organization = @current_user.on_guard_organization
-      redirect_to '/' unless @current_user.on_guard_supervisor&.on_guard_organization == @organization
+      redirect_to '/' unless @current_user.on_guard_supervisor&.on_guard_organization == @organization || !@organization
     end
 
   end

@@ -55,12 +55,12 @@ class PaymentBilling extends Component {
         setState({error: {message: 'Failed to contact On Guard servers, try again soon.'}})
       )
       .then(striperes => {
-        const subscription = JSON.parse(striperes.subscription)
+        const subscription = striperes.subscription
         this.setState({
           subscription,
-          item: JSON.parse(striperes.item),
-          invoices: JSON.parse(striperes.invoices),
-          card: JSON.parse(striperes.card),
+          item: striperes.item,
+          invoices: striperes.invoices,
+          card: striperes.card,
           end_of_month: new Date(striperes.end_of_month.split('-')).toLocaleDateString('en-us'),
           users_not_invoiced_count: striperes.users_not_invoiced_count
         })
@@ -154,7 +154,6 @@ class PaymentBilling extends Component {
                   On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed.{' '}
                   <strong>${quantity}.00</strong>
                 </p>
-
               </div>
             </div>
             <div style={{marginLeft: '20px'}}>
