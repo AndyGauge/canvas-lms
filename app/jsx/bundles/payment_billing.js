@@ -18,17 +18,27 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Elements} from '@stripe/react-stripe-js'
+import {Elements, ElementsConsumer} from '@stripe/react-stripe-js'
 import {loadStripe} from '@stripe/stripe-js'
 
 import PaymentBilling from '../on_guard/payment/billing'
 
 const stripePromise = loadStripe('pk_test_u9GdTvcNq92kCmp7khlDrnRz007AyPREka')
 
+const InjectedCheckoutForm = () => {
+  return (
+    <ElementsConsumer>
+      {({elements, stripe}) => (
+        <PaymentBilling elements={elements} stripe={stripe} />
+      )}
+    </ElementsConsumer>
+  );
+};
+
 function App() {
   return (
     <Elements stripe={stripePromise}>
-      <PaymentBilling />
+      <InjectedCheckoutForm />
     </Elements>
   )
 }

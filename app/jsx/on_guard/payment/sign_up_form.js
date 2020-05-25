@@ -117,7 +117,6 @@ export default function PaymentSignup() {
     const errs = err
 
     if (e.error) {
-      console.log(e.error)
       errs.stripeError = e.error.message
     } else if (e.empty) {
       errs.stripeError = 'Payment Card required'
