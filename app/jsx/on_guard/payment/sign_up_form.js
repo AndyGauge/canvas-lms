@@ -24,8 +24,7 @@ import {Billboard} from '@instructure/ui-billboard'
 import ClimbingBoxLoader from 'react-spinners/ClimbingBoxLoader'
 import {FileDrop} from '@instructure/ui-forms'
 import {FormFieldGroup} from '@instructure/ui-form-field'
-import {Flex, Grid} from '@instructure/ui-layout'
-import {showFlashAlert, showFlashError} from '../../shared/FlashAlert'
+import {Flex} from '@instructure/ui-layout'
 import {Text} from '@instructure/ui-elements'
 import {TextInput} from '@instructure/ui-text-input'
 import {uploadFiles} from '../../shared/upload_file'
@@ -118,7 +117,6 @@ export default function PaymentSignup() {
     const errs = err
 
     if (e.error) {
-      console.log(e.error)
       errs.stripeError = e.error.message
     } else if (e.empty) {
       errs.stripeError = 'Payment Card required'

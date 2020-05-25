@@ -4,15 +4,6 @@ module OnGuard
 
     skip_before_action :verify_authenticity_token
 
-    def show_bak
-      logout_current_user
-      @user = User.new
-      @organization = @user.build_on_guard_organization
-      @supervisor = @user.build_on_guard_supervisor
-      render :layout => 'bare'
-
-    end
-
     def show
       js_bundle :payment_signup
       render html: '<div id="root"></div>'.html_safe, layout: 'bare'
@@ -33,6 +24,7 @@ module OnGuard
 
     def complete
       @current_user.on_guard_organization.invite_users(params[:users])
+      OnGuard::Payment.update_quantity(params[:users].count) if params[:users] && params[:users].count > 0
       render json: {status: 'ok'}
     end
 

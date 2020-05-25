@@ -292,6 +292,9 @@ module.exports = {
   },
 
   plugins: [
+    new FilterWarningsPlugin({
+      exclude: /Critical dependency: the request of a dependency is an expression/
+    }),
     // return a non-zero exit code if there are any warnings so we don't continue compiling assets if webpack fails
     function() {
       this.plugin('done', ({compilation}) => {
@@ -301,9 +304,6 @@ module.exports = {
         }
       })
     },
-    new FilterWarningsPlugin({
-      exclude: /Critical dependency: the request of a dependency is an expression/
-    }),
 
     // sets these environment variables in compiled code.
     // process.env.NODE_ENV will make it so react and others are much smaller and don't run their

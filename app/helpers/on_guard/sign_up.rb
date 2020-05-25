@@ -15,6 +15,7 @@ module OnGuard
       @user.workflow_state='registered'
       @pseudonym = @user.create_pseudonym(unique_id: cc_addr, password: @params[:password], password_confirmation: @params[:passwordConfirmation], workflow_state: 'active')
       @user.accept_terms
+      @user.invoiced_at = Time.now
 
       cc = @user.communication_channels.build(:path_type => CommunicationChannel::TYPE_EMAIL, :path => cc_addr)
       @user.save!

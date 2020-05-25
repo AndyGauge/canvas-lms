@@ -960,7 +960,10 @@ CanvasRails::Application.routes.draw do
 
   namespace :on_guard do
     resources :users
-    resources :billings
+    resource :billing do
+      get 'stripe', on: :member
+      post 'update_payment', on: :member
+    end
     resource :sign_up do
       post 'complete', on: :collection
     end
