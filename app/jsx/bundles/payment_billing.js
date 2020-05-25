@@ -28,12 +28,10 @@ const stripePromise = loadStripe('pk_test_u9GdTvcNq92kCmp7khlDrnRz007AyPREka')
 const InjectedCheckoutForm = () => {
   return (
     <ElementsConsumer>
-      {({elements, stripe}) => (
-        <PaymentBilling elements={elements} stripe={stripe} />
-      )}
+      {({elements, stripe}) => <PaymentBilling elements={elements} stripe={stripe} />}
     </ElementsConsumer>
-  );
-};
+  )
+}
 
 function App() {
   return (

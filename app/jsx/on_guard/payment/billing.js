@@ -51,7 +51,9 @@ class PaymentBilling extends Component {
     const signal = this.fetchController.signal
     fetch('/on_guard/billing/stripe', {signal})
       .then(response => response.json())
-      .catch(error => setState({error: {message: 'Failed to contact On Guard servers, try again soon.'}}))
+      .catch(error =>
+        setState({error: {message: 'Failed to contact On Guard servers, try again soon.'}})
+      )
       .then(striperes => {
         const subscription = JSON.parse(striperes.subscription)
         this.setState({
@@ -60,7 +62,7 @@ class PaymentBilling extends Component {
           invoices: JSON.parse(striperes.invoices),
           card: JSON.parse(striperes.card),
           end_of_month: new Date(striperes.end_of_month.split('-')).toLocaleDateString('en-us'),
-          users_not_invoiced_count: striperes.users_not_invoiced_count,
+          users_not_invoiced_count: striperes.users_not_invoiced_count
         })
       })
   }
@@ -94,7 +96,9 @@ class PaymentBilling extends Component {
         body: form
       })
         .then(response => response.json())
-        .catch(error => this.setState({error: {message: 'unable to contact On Guard servers, try again soon.'}}))
+        .catch(error =>
+          this.setState({error: {message: 'unable to contact On Guard servers, try again soon.'}})
+        )
         .then(status => {
           if (status.status == 'ok') {
             this.setState({payment_updated: true})
@@ -117,17 +121,13 @@ class PaymentBilling extends Component {
     }
     const {stripe} = this.props
 
-    let alert = <div></div>
+    let alert = <div />
     if (this.state.error.message != 'undefined') {
-       alert = <div className={'ErrorAlert'}>
-        {this.state.error.message}
-      </div>
-    };
+      alert = <div className="ErrorAlert">{this.state.error.message}</div>
+    }
     if (this.state.payment_updated) {
-      alert = <div className={'SuccessAlert'}>
-        Payment Method successfully updated
-      </div>
-    };
+      alert = <div className="SuccessAlert">Payment Method successfully updated</div>
+    }
 
     return (
       <div>
@@ -136,31 +136,32 @@ class PaymentBilling extends Component {
         </ScreenReaderContent>
         <TabList onChange={this.onTabChanged}>
           <TabList.Panel title="Summary">
-            <div className={'reminder'} style={{marginBottom: '30px'}}>
+            <div className="reminder" style={{marginBottom: '30px'}}>
               <h2>CHARGE POLICY</h2>
-              <div className={'body'}>
+              <div className="body">
                 <p>On Guard bills $1 when you sign up, that covers your security training.</p>
                 <p>Add users at any time. We charge for those users at the end of every month</p>
               </div>
             </div>
-            <div style={{marginBottom:'30px'}}>
+            <div style={{marginBottom: '30px'}}>
               <h3>Upcoming Charges</h3>
-              <div style={{marginLeft:'20px'}}>
+              <div style={{marginLeft: '20px'}}>
                 <p>
-                  On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed. <strong>${quantity}.00</strong>
+                  On {this.state.end_of_month}, {this.state.users_not_invoiced_count} new users will
+                  be invoiced. <strong>${this.state.users_not_invoiced_count}.00</strong>
                 </p>
                 <p>
-                  On {this.state.end_of_month}, {this.state.users_not_invoiced_count} new users will be
-                  invoiced. <strong>${this.state.users_not_invoiced_count}.00</strong>
+                  On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed.{' '}
+                  <strong>${quantity}.00</strong>
                 </p>
+
               </div>
             </div>
             <div style={{marginLeft: '20px'}}>
               <p>
-                Additional Questions?  <a href={'mailto:support@on-guard.org'}>Send us an email</a>
+                Additional Questions? <a href="mailto:support@on-guard.org">Send us an email</a>
               </p>
             </div>
-
           </TabList.Panel>
           <TabList.Panel title="History">
             <Table margin="small 0" caption={<ScreenReaderContent />}>
@@ -201,13 +202,13 @@ class PaymentBilling extends Component {
                           border: '0.0625rem solid #EE0612',
                           borderRadius: '0.25rem',
                           padding: '10px 20px',
-                          marginBottom: '15px',
+                          marginBottom: '15px'
                         }
                       : {
                           border: '0.0625rem solid #C7CDD1',
                           borderRadius: '0.25rem',
                           padding: '10px 20px',
-                          marginBottom: '15px',
+                          marginBottom: '15px'
                         }
                   }
                 >

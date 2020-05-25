@@ -2856,6 +2856,8 @@ class UsersController < ApplicationController
       end
       @user.save!
 
+      OnGuard::Payment.update_quantity
+
       if @observee && !@user.as_observer_observation_links.where(user_id: @observee, root_account: @context).exists?
         UserObservationLink.create_or_restore(student: @observee, observer: @user, root_account: @context)
         @pairing_code&.destroy

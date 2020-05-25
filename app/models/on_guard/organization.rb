@@ -26,8 +26,6 @@ module OnGuard
       @not_invoiced_users ||= users.where(invoiced_at: nil)
     end
 
-
-
     private
     def generate_account
       create_account(root_account: ROOT_ACCOUNT, parent_account: ROOT_ACCOUNT, name: self.name)
