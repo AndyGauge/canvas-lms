@@ -1900,6 +1900,8 @@ class CoursesController < ApplicationController
         return redirect_to course_settings_path(@context.id)
       end
 
+      @show_left_side = false unless @context.grants_right?(@current_user, session, :read_as_admin)
+
       @context_enrollment ||= @pending_enrollment
       if @context.grants_right?(@current_user, session, :read)
         check_for_readonly_enrollment_state
@@ -3091,6 +3093,22 @@ class CoursesController < ApplicationController
     get_context
     return unless authorized_action(@context, @current_user, :manage_content)
     # render view
+  end
+
+  def complete
+    get_context
+    @show_left_side = false
+
+    # TODO: determine if all content viewed, quizes completed, etc.
+    @completion = OnGuard::CourseCompletion.where(user: @current_user, course: @context).first_or_create
+
+  end
+
+  def certificate
+    get_context
+
+    redirect_to @course unless @completion=@current_user.on_guard_course_completions.where(course: @context).first
+    @filename = "#{@current_user.name} #{@context.enrollment_term.name} Completion.pdf"
   end
 
   def retrieve_observed_enrollments(enrollments, active_by_date: false)
