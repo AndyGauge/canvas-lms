@@ -6,5 +6,5 @@ prawn_document(page_layout: :landscape, background: Rails.root.join('lib/on_guar
   pdf.move_down 100
   pdf.text @current_user.name, align: :center, size: 32
   pdf.move_down 170
-  pdf.text @completion.created_at.strftime("%B %d, %Y"), align: :center, size: 32
+  pdf.text @completion.completed_at.strftime("%B %d, %Y"), align: :center, size: 32
 end

@@ -70,13 +70,18 @@
         <% if show_link %></a>
         <% end %>
       </td>
+      </td>
       <% if @current_user.on_guard_supervisor %>
         <td class="course-list-no-left-border course-list-autoassigned-column">
           <%= current_enrollment.course.auto_assigned %>
         </td>
       <% end %>
       <td class="course-list-no-left-border course-list-completion-column">
-        <%= @current_user.on_guard_course_completions.find_by(course: current_enrollment.course)&.created_at&.strftime("%m/%d/%Y") || 'pending' %>
+        <% if current_enrollment.completed_at %>
+             <%= link_to(current_enrollment.completed_at.strftime("%m/%d/%Y"), course_certificate_path(current_enrollment.course, format: :pdf)) %>
+        <% else %>
+          <%= link_to('pending', course_path(current_enrollment.course)) %>
+        <% end %>
       </td>
 
 

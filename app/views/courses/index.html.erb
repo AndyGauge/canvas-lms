@@ -80,7 +80,10 @@
       <tr>
         <th scope="col" class="course-list-star-column"><span class="screenreader-only"><%= t ('Favorites') %></span></th>
         <th scope="col" class="course-list-course-title-column course-list-no-left-border"><%= t ('Course') %></th>
-        <th scope="col" class="course-list-nickname-column course-list-no-left-border">Auto-assigned</th>
+        <% if @current_user.on_guard_supervisor %>
+          <th scope="col" class="course-list-autoassigned-column course-list-no-left-border">Auto-assigned</th>
+        <% end %>
+        <th scope="col" class="course-list-completion-column course-list-no-left-border">Completed</th>
         <th scope="col" class="course-list-term-column course-list-no-left-border">Year</th>
 
       </tr>

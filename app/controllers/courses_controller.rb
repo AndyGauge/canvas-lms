@@ -3101,13 +3101,14 @@ class CoursesController < ApplicationController
 
     # TODO: determine if all content viewed, quizes completed, etc.
     @completion = OnGuard::CourseCompletion.where(user: @current_user, course: @context).first_or_create
+    @context.update(workflow_state: 'completed', completed_at: Date.today)
 
   end
 
   def certificate
     get_context
 
-    redirect_to @course unless @completion=@current_user.on_guard_course_completions.where(course: @context).first
+    redirect_to @context unless @completion=@current_user.enrollments.where.not(completed_at: nil).find_by(course: @context)
     @filename = "#{@current_user.name} #{@context.enrollment_term.name} Completion.pdf"
   end
 

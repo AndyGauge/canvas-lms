@@ -26,6 +26,10 @@
   You are logged in as supervisor<br>
   TODO: Create checklist of tasks to complete setup
 <% else %>
-  You are logged in as user<br>
-  TODO: Provide link to completed training or current training
+  <ul>
+    <% @current_user.enrollments.map do |enrollment| %>
+      <li><%=  %></li>
+    <% end %>
+
+  </ul>
 <% end %>
