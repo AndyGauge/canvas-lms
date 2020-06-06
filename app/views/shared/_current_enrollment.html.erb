@@ -70,12 +70,17 @@
         <% if show_link %></a>
         <% end %>
       </td>
-
-      <td class="course-list-no-left-border course-list-nickname-column">
-        <%= current_enrollment.course.auto_assigned %>
+      <% if @current_user.on_guard_supervisor %>
+        <td class="course-list-no-left-border course-list-autoassigned-column">
+          <%= current_enrollment.course.auto_assigned %>
+        </td>
+      <% end %>
+      <td class="course-list-no-left-border course-list-completion-column">
+        <%= @current_user.on_guard_course_completions.find_by(course: current_enrollment.course)&.created_at&.strftime("%m/%d/%Y") || 'pending' %>
       </td>
 
-      <td class="course-list-no-left-border course-list-term-column">
+
+  <td class="course-list-no-left-border course-list-term-column">
       <% if current_enrollment.course.enrollment_term.default_term? %>
         <span class="screenreader-only"><%= current_enrollment.course.enrollment_term.name %></span>
       <% else %>
