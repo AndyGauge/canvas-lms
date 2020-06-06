@@ -176,7 +176,7 @@ Which is you?", :count => @merge_opportunities.length %>
       <% end %>
       <div class="control-group">
         <div class="controls">
-          <% if @root_account.require_acceptance_of_terms?(@user) %>
+          <% if @root_account.require_acceptance_of_terms?(@user) && false %>
             <% js_bundle :terms_of_service_modal %>
             <div class="terms-of-service__register">
               <label for="user_terms_of_use" class="checkbox">

@@ -449,7 +449,7 @@ class UsersController < ApplicationController
           enrollment_type: params[:enrollment_type]})
     end
 
-    includes = (params[:include] || []) & %w{avatar_url email last_login time_zone uuid}
+    includes = (params[:include] || []) & %w{avatar_url email last_login time_zone uuid completion}
     includes << 'last_login' if params[:sort] == 'last_login' && !includes.include?('last_login')
     users = users.with_last_login if includes.include?('last_login') && !search_term
     users = Api.paginate(users, self, api_v1_account_users_url, page_opts)
