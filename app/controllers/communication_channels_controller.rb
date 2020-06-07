@@ -416,7 +416,7 @@ class CommunicationChannelsController < ApplicationController
 
     # OnGuard Enroll in auto assigned courses
     Course.published.where(auto_assigned: true).each do |c|
-      StudentEnrollment.create(course: c, user: @user)
+      StudentEnrollment.where(course: c, user: @user).first_or_create
     end
 
     if failed

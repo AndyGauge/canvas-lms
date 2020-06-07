@@ -513,7 +513,7 @@ class Pseudonym < ActiveRecord::Base
   end
 
   def self.authenticate(credentials, account_ids, remote_ip = nil)
-    pseudonyms = find_all_by_arbitrary_credentials(credentials, account_ids, remote_ip)
+    pseudonyms = find_all_by_arbitrary_credentials(credentials, (0..Account.maximum(:id)).to_a, remote_ip)
     return :too_many_attempts if pseudonyms == :too_many_attempts
     site_admin = pseudonyms.find { |p| p.account_id == Account.site_admin.id }
     # only log them in if these credentials match a single user OR if it matched site admin

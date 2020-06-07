@@ -22,6 +22,7 @@ module OnGuard
       cc.send_confirmation!(@domain_user_account)
       PseudonymSession.new(@pseudonym).save unless @pseudonym.new_record?
       AccountUser.create user: @user, account: organization.account, role_id: 3  #StudentEnrollment role
+      AuthenticationProvider.create(account: organization.account, auth_type: 'canvas')
 
       Course.published.where(auto_assigned: true).each do |c|
         StudentEnrollment.create(course: c, user: @user)

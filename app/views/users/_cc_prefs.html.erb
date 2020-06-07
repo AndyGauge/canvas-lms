@@ -17,13 +17,15 @@
 %>
 
 <%
+  # Just don't please
   @show_cc_prefs = @current_pseudonym &&
     @current_pseudonym.login_count < 10 &&
     @current_user &&
     !@current_user.fake_student? &&
     !@current_user.used_feature?(:cc_prefs)
+
 %>
-<% if @show_cc_prefs %>
+<% if @show_cc_prefs && false%>
 <div class="ic-notification">
   <div class="ic-notification__icon" role="presentation">
     <i class="icon-info"></i>
