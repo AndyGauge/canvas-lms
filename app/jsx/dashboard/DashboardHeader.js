@@ -200,16 +200,7 @@ class DashboardHeader extends React.Component {
               style={{display: this.state.currentDashboard === 'planner' ? 'block' : 'none'}}
             />
           )}
-          <div id="DashboardOptionsMenu_Container">
-            <DashboardOptionsMenu
-              view={this.state.currentDashboard}
-              planner_enabled={this.props.planner_enabled}
-              onDashboardChange={this.changeDashboard}
-              menuButtonRef={ref => {
-                this.menuButtonFocusable = ref
-              }}
-            />
-          </div>
+          <div id="DashboardOptionsMenu_Container" />
           {this.props.planner_enabled && <div id="dashboard-planner-header-aux" />}
         </div>
       </div>

@@ -144,6 +144,10 @@ module Api::V1::User
         json[:time_zone] = zone.name
       end
 
+      if includes.include?('completion')
+        json[:completion] = user.completion || false
+      end
+
       if tool_includes.include?('lti_id') || includes.include?('lti_id')
         json[:lti_id] = Lti::Asset.old_id_for_user_in_context(user, context) || user.lti_context_id
       end

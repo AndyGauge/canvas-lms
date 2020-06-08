@@ -22,10 +22,21 @@
   <%= image_tag(brand_variable("ic-brand-right-sidebar-logo"), :class => "ic-sidebar-logo__image", :alt => "Canvas by Instructure") %>
 </div>
 <% end %>
-<% if @current_user.on_guard_supervisor.present? %>
-  You are logged in as supervisor<br>
-  TODO: Create checklist of tasks to complete setup
-<% else %>
-  You are logged in as user<br>
-  TODO: Provide link to completed training or current training
-<% end %>
+<div class="list-view">
+  <nav role="navigation">
+    <ul>
+      <li class="right-nav-item"><%= link_to("Logout", logout_path) %></li>
+
+
+      <% if @current_user.on_guard_supervisor.present? %>
+        <li class="right-nav-item"><a href="/on_guard/users">Add users</a></li>
+        <li class="right-nav-item"><a href="/on_guard/billing">Upcoming charges</a></li>
+      <% end %>
+
+      <% @current_user.enrollments.order(:completed_at).limit(5).map do |enrollment| %>
+        <li class="right-nav-item"><%= enrollment.completed_at ? link_to("Download #{enrollment.course.name} certificate", course_certificate_path(enrollment.course, format: :pdf)) : link_to("Take #{enrollment.course.name}", enrollment.course) %></li>
+      <% end %>
+    </ul>
+
+  </nav>
+</div>

@@ -414,6 +414,11 @@ class CommunicationChannelsController < ApplicationController
       failed = true
     end
 
+    # OnGuard Enroll in auto assigned courses
+    Course.published.where(auto_assigned: true).each do |c|
+      StudentEnrollment.where(course: c, user: @user).first_or_create
+    end
+
     if failed
       respond_to do |format|
         format.html { render :confirm_failed, status: :bad_request }

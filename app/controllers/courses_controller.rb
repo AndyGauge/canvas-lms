@@ -1900,6 +1900,8 @@ class CoursesController < ApplicationController
         return redirect_to course_settings_path(@context.id)
       end
 
+      @show_left_side = false unless @context.grants_right?(@current_user, session, :read_as_admin)
+
       @context_enrollment ||= @pending_enrollment
       if @context.grants_right?(@current_user, session, :read)
         check_for_readonly_enrollment_state
@@ -3091,6 +3093,22 @@ class CoursesController < ApplicationController
     get_context
     return unless authorized_action(@context, @current_user, :manage_content)
     # render view
+  end
+
+  def complete
+    get_context
+    @show_left_side = false
+
+    # TODO: determine if all content viewed, quizes completed, etc.
+    StudentEnrollment.where(course: @context, user: @current_user, completed_at: nil)
+        .update(workflow_state: 'completed', completed_at: Date.today)
+  end
+
+  def certificate
+    get_context
+
+    redirect_to @context unless @completion=@current_user.enrollments.where.not(completed_at: nil).find_by(course: @context)
+    @filename = "#{@current_user.name} #{@context.enrollment_term.name} Completion.pdf"
   end
 
   def retrieve_observed_enrollments(enrollments, active_by_date: false)
