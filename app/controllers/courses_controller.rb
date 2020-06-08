@@ -3100,9 +3100,8 @@ class CoursesController < ApplicationController
     @show_left_side = false
 
     # TODO: determine if all content viewed, quizes completed, etc.
-    @completion = OnGuard::CourseCompletion.where(user: @current_user, course: @context).first_or_create
-    @context.update(workflow_state: 'completed', completed_at: Date.today)
-
+    StudentEnrollment.where(course: @context, user: @current_user, completed_at: nil)
+        .update(workflow_state: 'completed', completed_at: Date.today)
   end
 
   def certificate

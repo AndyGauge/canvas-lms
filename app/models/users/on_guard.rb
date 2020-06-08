@@ -5,5 +5,6 @@ module Users
     def completion
       enrollments.maximum(:created_at)&.to_date if enrollments.where(completed_at: nil).empty?
     end
+    attr_accessor :terms_of_use
   end
 end
