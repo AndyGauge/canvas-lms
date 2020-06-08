@@ -122,7 +122,7 @@ class PaymentBilling extends Component {
     const {stripe} = this.props
 
     let alert = <div />
-    if (this.state.error.message != 'undefined') {
+    if (typeof(this.state.error.message) != 'undefined') {
       alert = <div className="ErrorAlert">{this.state.error.message}</div>
     }
     if (this.state.payment_updated) {
