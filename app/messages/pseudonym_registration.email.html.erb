@@ -6,11 +6,11 @@
 <% end %>
 
 <% define_content :subject do %>
-  <%= t :subject, "Finish Registration: On Guard" %>
+  <%= t :subject, "Register for your security training" %>
 <% end %>
 
 <a href="<%= content(:link) %>">
-  <%= t :link, "Click here to finish the registration process" %>
+  <%= t :link, "Click here to take your security training" %>
 </a>
 
-<p><%= t :body, "You have been registered for an On Guard account at %{account}!  Before you can log in and start using On Guard, you'll need to finish the configuration process.", :account => p.account.display_name %></p>
+<p><%= t :body, "You have been registered for an On Guard account with %{account}!  Before you can take your training, you'll need to register your On Guard account.", :account => p.user.on_guard_organization.name %></p>

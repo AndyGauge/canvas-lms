@@ -8,7 +8,7 @@
   <%= t :subject, "Finish Registration: On Guard" %>
 <% end %>
 
-<%= t :body, "You have been registered for an On Guard account at %{account}!  Before you can log in and start using On Guard, you'll need to finish the configuration process.", :account => p.account.display_name %>
+<%= t :body, "You have been registered for an On Guard account with %{account}!  Before you can log in and take your training, you'll need to finish the configuration process.", :account => p.user.on_guard_organization.name %>
 
 <%= t :link_message, "To finish the registration process, please visit the following url:" %>
 <%= content :link %>
