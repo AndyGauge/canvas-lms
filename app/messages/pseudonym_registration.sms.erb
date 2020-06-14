@@ -4,6 +4,6 @@
   <%= p.user.registered? ? profile_url : registration_confirmation_url(cc.confirmation_code) %>
 <% end %>
 
-<%= t :body, "You have been registered for a On Guard account at %{account}!  Before you can log in and start using On Guard, you'll need to finish the configuration process.", :account => p.account.display_name %>
+<%= t :body, "You have been registered for an On Guard account at %{account}!  Before you can log in and start using On Guard, you'll need to finish the configuration process.", :account => p.account.display_name %>
 
 <%= t('link', 'Click the following url to finish the registration process: %{link}', :link => content(:link)) %>
