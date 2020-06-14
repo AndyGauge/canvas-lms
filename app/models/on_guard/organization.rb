@@ -14,10 +14,11 @@ module OnGuard
         if EmailAddressValidator.valid?(cc_addr)
           new_user = self.users.create!(name: user_attributes[:name], workflow_state: 'pre-registered')
           new_user.accept_terms
-          new_user.pseudonyms.create!(unique_id: user_attributes[:email])
+          pseudonym = new_user.pseudonyms.create!(unique_id: user_attributes[:email])
           new_user.communication_channels.create!(:path_type => CommunicationChannel::TYPE_EMAIL, :path => cc_addr, workflow_state: 'unconfirmed')
           new_user.save!
           AccountUser.create user: new_user, account: self.account, role_id: 8  #NoPermissions
+          pseudonym.send_registration_notification!
         end
       end
     end
