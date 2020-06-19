@@ -212,6 +212,11 @@ class Enrollment < ActiveRecord::Base
       !record.observer? &&
       !record.just_created && (record.changed_state(:active, :invited) || record.changed_state(:active, :creation_pending))
     }
+
+    p.dispatch :enrollment_completed
+    p.to { self.user }
+    p.whenever { @send_completion }
+
   end
 
   def dispatch_invitations_later
@@ -221,6 +226,12 @@ class Enrollment < ActiveRecord::Base
       # this won't work if they invite them and then change the course/term/section dates _afterwards_ so hopefully people don't do that
       self.send_later_enqueue_args(:re_send_confirmation_if_invited!, {:run_at => self.available_at, :singleton => "send_enrollment_invitations_#{global_id}"})
     end
+  end
+
+  def send_completion_certificate!
+    @send_completion = true
+    self.save!
+    @send_completion = false
   end
 
   scope :active, -> { where("enrollments.workflow_state<>'deleted'") }

@@ -3100,8 +3100,10 @@ class CoursesController < ApplicationController
     @show_left_side = false
 
     # TODO: determine if all content viewed, quizes completed, etc.
-    StudentEnrollment.where(course: @context, user: @current_user, completed_at: nil)
-        .update(workflow_state: 'completed', completed_at: Date.today)
+    enrollments = StudentEnrollment.where(course: @context, user: @current_user)
+    enrollments.update(workflow_state: 'completed', completed_at: Date.today)
+    enrollments.each {|enrollment| enrollment.send_completion_certificate! }
+
   end
 
   def certificate

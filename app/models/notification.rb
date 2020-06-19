@@ -297,6 +297,7 @@ class Notification < ActiveRecord::Base
     t 'names.content_export_failed', 'Content Export Failed'
     t 'names.content_export_finished', 'Content Export Finished'
     t 'names.enrollment_accepted', 'Enrollment Accepted'
+    t 'names.enrollment_completed', 'Enrollment Completed'
     t 'names.enrollment_invitation', 'Enrollment Invitation'
     t 'names.enrollment_notification', 'Enrollment Notification'
     t 'names.enrollment_registration', 'Enrollment Registration'

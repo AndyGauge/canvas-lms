@@ -760,6 +760,7 @@ class Course < ActiveRecord::Base
          record.name != Course.default_name)
       )
     }
+
   end
 
   def self.default_name
