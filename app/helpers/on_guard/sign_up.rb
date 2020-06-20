@@ -19,6 +19,7 @@ module OnGuard
 
       cc = @user.communication_channels.build(:path_type => CommunicationChannel::TYPE_EMAIL, :path => cc_addr)
       @user.save!
+      @pseudonym.send_registration_done_notification!
       cc.send_confirmation!(@domain_user_account)
       PseudonymSession.new(@pseudonym).save unless @pseudonym.new_record?
       AccountUser.create user: @user, account: organization.account, role_id: 3  #StudentEnrollment role

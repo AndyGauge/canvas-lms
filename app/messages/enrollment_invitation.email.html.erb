@@ -3,20 +3,20 @@
 <% end %>
 
 <% define_content :subject do %>
-  <%= t :subject, "Course Invitation" %>
+  <%= t :subject, "On Guard Security Training invitation" %>
 <% end %>
 
 <% define_content :footer_link do %>
   <a href="<%= content(:link) %>">
-    <%= t(:link, "Click here to view the course page") %>
+    <%= t(:link, "Click here to view the training") %>
   </a>
 <% end %>
 
 <% email = asset.user.email; login = (asset.user.pseudonym.unique_id rescue "none") %>
 
 <p>
-  <%= t "You've been invited to participate in the course, %{course}. Course role: %{role_type}",
-      :course => asset.course.name, :role_type => asset.readable_role_name %>
+  <%= t "New security training that needs to be completed, %{course}.",
+      :course => asset.course.name %>
 </p>
 
 <table border="0" style="font-size: 14px; color: #444444;
@@ -44,7 +44,7 @@
   <tr>
     <td>
       <a href="<%= content(:link) %>" style="color: #FFFFFF; background-color: #008EE2; padding: 8px 40px; border-radius: 3px; text-decoration: none; font-weight: bold;">
-        <%= t('Get Started') %>
+        <%= t('Access new training') %>
       </a>
     </td>
   </tr>

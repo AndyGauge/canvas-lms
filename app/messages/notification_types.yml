@@ -160,6 +160,8 @@
       delay_for: 0
     - name: Peer Review Invitation
       delay_for: 0
+    - name: Enrollment Completed
+      delay_for: 0
 
 - category: Late Grading
   notifications:
@@ -206,6 +208,7 @@
       delay_for: 0
     - name: Enrollment Accepted
       delay_for: 0
+
 
 - category: Registration
   notifications:

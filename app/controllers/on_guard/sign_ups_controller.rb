@@ -15,6 +15,7 @@ module OnGuard
       render json: {status: @sign_up.success, user_id: @sign_up.user.id}
     end
 
+    # I don't think this is called anywhere, it does nothing
     def update
       @sign_up = OnGuard::SignUp.new(params).update
       if @sign_up.complete
@@ -23,8 +24,8 @@ module OnGuard
     end
 
     def complete
-      @current_user.on_guard_organization.invite_users(params[:users])
-      OnGuard::Payment.update_quantity(params[:users].count) if params[:users] && params[:users].count > 0
+      @current_user.on_guard_organization.invite_users(params[:users_to_send])
+      OnGuard::Payment.new(@current_user.on_guard_organization).update_quantity(params[:users_to_send].count) if params[:users_to_send] && params[:users_to_send].count > 0
       render json: {status: 'ok'}
     end
 

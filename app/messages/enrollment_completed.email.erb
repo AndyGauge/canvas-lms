@@ -1,0 +1,11 @@
+<% define_content :link do %>
+  <%= course_certificate_url(asset.course) %>
+<% end %>
+
+<% define_content :subject do %>
+  Completed On Guard Training:
+<% end %>
+
+Download your completion certificate for <%=asset.course.name %>
+
+<%= content :link %>

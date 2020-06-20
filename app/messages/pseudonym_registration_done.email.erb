@@ -4,10 +4,10 @@
 <% end %>
 
 <% define_content :subject do %>
-  <%= t :subject, "Canvas Registration Complete" %>
+  <%= t :subject, "On Guard Registration Complete" %>
 <% end %>
 
-<%= t :body, "You have been registered for a Canvas account at %{account}!  ", :account => p.account.display_name %>
+<%= t :body, "You have been registered for an On Guard account at %{account}!  ", :account => p.user.on_guard_organization.name %>
 
-<%= t :link_message, "Visit the following url to access your account:" %>
+<%= t :link_message, "Visit the following url to #{p.user.on_guard_supervisor ? "manage your account and " : ""} take your training" %>
 <%= content :link %>

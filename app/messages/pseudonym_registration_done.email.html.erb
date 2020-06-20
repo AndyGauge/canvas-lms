@@ -4,11 +4,11 @@
 <% end %>
 
 <% define_content :subject do %>
-  <%= t :subject, "Canvas Registration Complete" %>
+  <%= t :subject, "On Guard Registration Complete" %>
 <% end %>
 
-<p><%= t :body, "You have been registered for a Canvas account at %{account}!", :account => p.account.display_name %></p>
+<p><%= t :body, "You have been registered for an On Guard account with %{account}!", :account => p.user.on_guard_organization.name %></p>
 
 <a href="<%= content(:link) %>">
-  <%= t :link, "Click here to access your account" %>
+  <%= t :link, "Click here to #{p.user.on_guard_supervisor ? "manage your account and " : ""} take your training" %>
 </a>

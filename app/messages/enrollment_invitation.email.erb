@@ -3,11 +3,11 @@
 <% end %>
 
 <% define_content :subject do %>
-  <%= t :subject, "Course Invitation" %>
+  <%= t :subject, "On Guard Security Training invitation" %>
 <% end %>
 
-<%= t "You've been invited to participate in the course, %{course}. Course role: %{role_type}",
-    :course => asset.course.name, :role_type => asset.readable_role_name %>
+<%= t "New security training that needs to be completed, %{course}.",
+    :course => asset.course.name %>
 
 <% email = asset.user.email; login = (asset.user.pseudonym.unique_id rescue "none") %>
 <%= before_label :name, "Name" %> <%= asset.user.name %>
