@@ -17,6 +17,6 @@
 %>
 
 <%= render :partial => "layouts/head" %>
-<body>
+<body class="<%= (body_classes).uniq.join(" ") %>">
 <%= yield %>
 <%= render :partial => 'layouts/foot', :locals => { :include_common_bundle => true } %>
