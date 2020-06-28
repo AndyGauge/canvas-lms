@@ -742,7 +742,7 @@ CanvasRails::Application.routes.draw do
   delete 'logout' => 'login#destroy'
   get 'logout' => 'login#logout_landing'
 
-  get 'login/canvas' => 'login/canvas#new', as: :canvas_login
+  get 'login/onguard' => 'login/canvas#new', as: :canvas_login
   post 'login/canvas' => 'login/canvas#create'
 
   get 'login/ldap' => 'login/ldap#new'

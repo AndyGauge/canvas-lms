@@ -1,30 +1,4 @@
-sign up organization for On Guard training services.
-Pay only $1 per user, renews yearly.
-<br><br>
-Let's start with your organization.
-Where do you work?
-<%= form_with url: '/on_guard/sign_up', model: @user do |f| %>
-<ul>
-  <%= f.fields_for :organization do |org| %>
-  <li>
-    <%= org.text_field :name, placeholder: 'Organization Name' %>
-  </li>
-  <% end %>
-</ul>
-  <div>
-    <%= f.text_field :name, placeholder: 'Your name' %>
-    <%= f.text_field :email, placeholder: 'Your email' %>
-  </div>
-<div>
-  <%= f.fields_for :pseudonym do |psd| %>
-    <%= psd.password_field :password, placeholder: 'Password' %>
-    <%= psd.password_field :password_confirmation, placeholder: 'Password' %>
-  <% end %>
 
-</div>
+<% add_body_class "full-width ic-Login-Body" %>
 
-
-  <%= f.submit 'Sign Up' %>
-<% end %>
-
-
+<div id="root"></div>
