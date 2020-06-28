@@ -89,7 +89,9 @@
             <a id="global_nav_dashboard_link" href="<%= dashboard_url %>" class="ic-app-header__menu-list-link">
               <div class="menu-item-icon-container" aria-hidden="true">
                 <%= render(partial: "shared/svg/#{'k12/' if k12?}svg_icon_dashboard.svg") %>
+                <span class="menu-item__badge"></span>
               </div>
+
               <div class="menu-item__text"><%= t('Dashboard') %></div>
             </a>
           </li>

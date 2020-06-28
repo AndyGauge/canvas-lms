@@ -1,12 +1,12 @@
 module OnGuard
   class SignUpsController < ApplicationController
     include Login::Shared
+    layout 'bare'
 
     skip_before_action :verify_authenticity_token
 
     def show
       js_bundle :payment_signup
-      render html: '<div id="root"></div>'.html_safe, layout: 'bare'
     end
 
     def create

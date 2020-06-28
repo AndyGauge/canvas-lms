@@ -179,6 +179,8 @@ export default function UnreadCounts(props) {
   // If we haven't started polling yet, see if we can use a saved value
   if (!syncState.current.savedChecked) checkSavedValue()
 
+  if (!targetEl) return null
+
   if (!count) return createPortal(null, targetEl)
 
   return createPortal(
