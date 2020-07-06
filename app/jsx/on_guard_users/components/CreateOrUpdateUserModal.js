@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2017 - present Instructure, Inc.
  *
- * This file is part of Canvas.
+ * This file is part of .
  *
  * Canvas is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -159,7 +159,7 @@ export default class CreateOrUpdateUserModal extends React.Component {
           ? [
               {
                 name: 'pseudonym[unique_id]',
-                label: this.props.customized_login_handle_name || I18n.t('Email'),
+                label: I18n.t('Email'),
                 required: this.props.customized_login_handle_name
                   ? I18n.t('%{login_handle} is required', {
                       login_handle: this.props.customized_login_handle_name
@@ -222,26 +222,29 @@ export default class CreateOrUpdateUserModal extends React.Component {
       >
         <Modal.Body>
           <FormFieldGroup layout="stacked" rowSpacing="small" description="">
-            {this.getInputFields().map(({name, label, hint, required, Component = TextInput}) => (
-              <Component
-                key={name}
-                label={label}
-                value={get(this.state.data, name)}
-                checked={get(this.state.data, name)}
-                onChange={e =>
-                  this.onChange(
-                    name,
-                    e.target.type === 'checkbox' ? e.target.checked : e.target.value
-                  )
-                }
-                required={!!required}
-                layout="inline"
-                messages={(this.state.errors[name] || [])
-                  .map(errMsg => ({type: 'error', text: errMsg}))
-                  .concat(hint && {type: 'hint', text: hint})
-                  .filter(Boolean)}
-              />
-            ))}
+            {this.getInputFields().map(({name, label, hint, required, Component = TextInput}) => {
+              const val = get(this.state.data, name)
+              return (
+                <Component
+                  key={name}
+                  label={label}
+                  value={val ? val : '' }
+                  checked={val}
+                  onChange={e =>
+                    this.onChange(
+                      name,
+                      e.target.type === 'checkbox' ? e.target.checked : e.target.value
+                    )
+                  }
+                  required={!!required}
+                  layout="inline"
+                  messages={(this.state.errors[name] || [])
+                    .map(errMsg => ({type: 'error', text: errMsg}))
+                    .concat(hint && {type: 'hint', text: hint})
+                    .filter(Boolean)}
+                />
+              )}
+            )}
           </FormFieldGroup>
         </Modal.Body>
         <Modal.Footer>

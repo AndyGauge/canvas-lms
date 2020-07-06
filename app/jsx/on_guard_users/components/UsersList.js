@@ -16,6 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import axios from 'axios'
 import {Table} from '@instructure/ui-elements'
 import {ScreenReaderContent} from '@instructure/ui-a11y'
 import React from 'react'
@@ -25,6 +26,11 @@ import UsersListRow from './UsersListRow'
 import UsersListHeader from './UsersListHeader'
 
 export default class UsersList extends React.Component {
+  constructor(props) {
+    super(props)
+    this.deleteUser = this.deleteUser.bind(this)
+  }
+
   shouldComponentUpdate(nextProps) {
     let count = 0
     for (const prop in this.props) {
@@ -38,6 +44,29 @@ export default class UsersList extends React.Component {
       }
     }
     return count !== Object.keys(nextProps).length
+  }
+
+  deleteUser(userid, e) {
+    const target = e.target
+    try {
+      axios
+        .delete(`/api/v1/accounts/1/users/${userid}`)
+        .then(response => {
+          if (response.status == 200) {
+            target.parentElement.parentElement.parentElement.parentElement.removeChild(
+              target.parentElement.parentElement.parentElement
+            )
+          } else {
+            target.setAttribute('style', 'color:#CC0000;')
+          }
+        })
+        .catch(() => {
+          target.setAttribute('style', 'color:#CC0000;')
+        })
+    } catch (err) {
+      target.setAttribute('style', 'color:#CC0000;')
+    }
+
   }
 
   render() {
@@ -93,6 +122,7 @@ export default class UsersList extends React.Component {
               accountId={this.props.accountId}
               user={user}
               permissions={this.props.permissions}
+              deleteUser={e => this.deleteUser(user.id, e)}
             />
           ))}
         </tbody>

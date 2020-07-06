@@ -21,17 +21,15 @@ import {func, string, element} from 'prop-types'
 import axios from 'axios'
 import {Billboard} from '@instructure/ui-billboard'
 import {Button} from '@instructure/ui-buttons'
-import {Checkbox, TextInput} from '@instructure/ui-forms'
-import {FileDrop} from '@instructure/ui-forms'
-import {Flex} from '@instructure/ui-layout'
+import {Checkbox, TextInput, FileDrop} from '@instructure/ui-forms'
+
+import {Flex, View} from '@instructure/ui-layout'
 import {IconCheckMarkSolid} from '@instructure/ui-icons'
 import Modal from '../../shared/components/InstuiModal'
 import {ScreenReaderContent} from '@instructure/ui-a11y'
-import {Spinner} from '@instructure/ui-elements'
-import {Table} from '@instructure/ui-elements'
-import {Text} from '@instructure/ui-elements'
+import {Spinner, Table, Text} from '@instructure/ui-elements'
+
 import {uploadFiles} from '../../shared/upload_file'
-import {View} from '@instructure/ui-layout'
 
 export default class ImportUserModal extends React.Component {
   static propTypes = {
@@ -40,8 +38,9 @@ export default class ImportUserModal extends React.Component {
     url: string.isRequired,
     afterSave: func.isRequired
   }
+
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       fileMessages: [],
       open: false,
@@ -50,8 +49,8 @@ export default class ImportUserModal extends React.Component {
     }
   }
 
-  handleDropAccepted = async (files) => {
-    this.setState({loading:true})
+  handleDropAccepted = async files => {
+    this.setState({loading: true})
     const uploads = await uploadFiles(files, this.props.url)
     uploads.map(upload => {
       fetch(this.props.url_response + upload.id, {
@@ -61,54 +60,59 @@ export default class ImportUserModal extends React.Component {
       })
         .then(response => response.json())
         .then(users => {
-          users.map(user => {user.include=!(user.duplicate || user.blocked)})
-          this.setState({users, loading:false}, () => this.sortBy('excluded'))
+          users.map(user => {
+            user.include = !(user.duplicate || user.blocked)
+          })
+          this.setState({users, loading: false}, () => this.sortBy('excluded'))
         })
     })
   }
 
   handleDropRejected = () => {
-    this.setState({fileMessages: [
-      {
-        text: 'must be .csv',
-        type: 'error'
-      }
-    ]})
+    this.setState({
+      fileMessages: [
+        {
+          text: 'must be .csv',
+          type: 'error'
+        }
+      ]
+    })
   }
 
   handleAddUsers = () => {
-    this.setState({loading:true})
-    axios({url: this.props.url_complete, method: 'POST', data: this.state.users.filter(user => user.include)}).then(
-      this.setState({open:false, users:[], loading:false})
-    )
+    this.setState({loading: true})
+    axios({
+      url: this.props.url_complete,
+      method: 'POST',
+      data: this.state.users.filter(user => user.include)
+    }).then(this.setState({open: false, users: [], loading: false}))
   }
 
-  sortBy = (by) => {
-    let users = [...this.state.users]
-    switch(by) {
+  sortBy = by => {
+    const users = [...this.state.users]
+    switch (by) {
       case 'name':
-        users.sort((a,b) => (a.name > b.name) ? 1 : -1)
-        break;
+        users.sort((a, b) => (a.name > b.name ? 1 : -1))
+        break
       case 'email':
-        users.sort((a,b) => (a.email > b.email) ? 1 : -1)
-        break;
+        users.sort((a, b) => (a.email > b.email ? 1 : -1))
+        break
       case 'excluded':
-        users.sort((a,b) => (a.duplicate > b.duplicate) ? 1 : -1)
-        users.sort((a,b) => (a.blocked > b.blocked) ? 1 : -1)
-        break;
+        users.sort((a, b) => (a.duplicate > b.duplicate ? 1 : -1))
+        users.sort((a, b) => (a.blocked > b.blocked ? 1 : -1))
+        break
     }
     this.setState({users})
-
   }
 
-  check = (idx) => {
-    let users = [...this.state.users]
+  check = idx => {
+    const users = [...this.state.users]
     users[idx].include = !users[idx].include
     this.setState({users})
   }
 
   render = () => (
-        <span>
+    <span>
       <Modal
         as="form"
         onSubmit={this.handleAddUsers}
@@ -143,63 +147,73 @@ export default class ImportUserModal extends React.Component {
             onDropRejected={this.handleDropRejected}
           />
           {this.state.loading ? (
-          <View display="block" textAlign="center" padding="medium">
-            <Spinner size="medium" renderTitle='Loading...' />
-          </View>
+            <View display="block" textAlign="center" padding="medium">
+              <Spinner size="medium" renderTitle="Loading..." />
+            </View>
           ) : (
-          <Table
-            margin="small 0"
-            caption={<ScreenReaderContent>Users</ScreenReaderContent>}
-          >
-            <thead>
-              <tr>
-                <th scope={"col"}>
-                  Import
-                </th>
-                <th scope="col">
-                  <Button
-                    variant="link"
-                    onClick={() => this.sortBy('name')}
-                    theme={{fontWeight: '700', mediumPadding: '0', mediumHeight: '1.5rem'}}>Name</Button>
-                </th>
-                <th scope="col">
-                  <Button
-                    variant="link"
-                    onClick={() => this.sortBy('email')}
-                    theme={{fontWeight: '700', mediumPadding: '0', mediumHeight: '1.5rem'}}>Email</Button>
-                </th>
-                <th scope={'col'} style={{textAlign: 'center'}}>
-                  Duplicate
-                </th>
-                <th scope={'col'} style={{textAlign: 'center'}}>
-                  Blocked
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.users.map((user, idx) =>
-                <tr key={'import' + idx} style={user.include ? {} : {color: '#888'}}>
-                  <td>
-                    <div style={{width: 15, float: "left"}}>&nbsp;</div>
-                    <div style={{width: '*'}}>
-                      <Checkbox key={'importcheck' + idx} label={''} checked={user.include} value={user.include}
-                                onChange={() => this.check(idx)}/>
-                    </div>
-                  </td>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td style={{textAlign: 'center'}}>{user.duplicate ? <IconCheckMarkSolid/> : ''}</td>
-                  <td style={{textAlign: 'center'}}>{user.blocked ? <IconCheckMarkSolid/> : ''}</td>
+            <Table margin="small 0" caption={<ScreenReaderContent>Users</ScreenReaderContent>}>
+              <thead>
+                <tr>
+                  <th scope="col">Import</th>
+                  <th scope="col">
+                    <Button
+                      variant="link"
+                      onClick={() => this.sortBy('name')}
+                      theme={{fontWeight: '700', mediumPadding: '0', mediumHeight: '1.5rem'}}
+                    >
+                      Name
+                    </Button>
+                  </th>
+                  <th scope="col">
+                    <Button
+                      variant="link"
+                      onClick={() => this.sortBy('email')}
+                      theme={{fontWeight: '700', mediumPadding: '0', mediumHeight: '1.5rem'}}
+                    >
+                      Email
+                    </Button>
+                  </th>
+                  <th scope="col" style={{textAlign: 'center'}}>
+                    Duplicate
+                  </th>
+                  <th scope="col" style={{textAlign: 'center'}}>
+                    Blocked
+                  </th>
                 </tr>
-              )}
-
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {this.state.users.map((user, idx) => (
+                  <tr key={'import' + idx} style={user.include ? {} : {color: '#888'}}>
+                    <td>
+                      <div style={{width: 15, float: 'left'}}>&nbsp;</div>
+                      <div style={{width: '*'}}>
+                        <Checkbox
+                          key={'importcheck' + idx}
+                          label=""
+                          checked={user.include}
+                          value={user.include}
+                          onChange={() => this.check(idx)}
+                        />
+                      </div>
+                    </td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td style={{textAlign: 'center'}}>
+                      {user.duplicate ? <IconCheckMarkSolid /> : ''}
+                    </td>
+                    <td style={{textAlign: 'center'}}>
+                      {user.blocked ? <IconCheckMarkSolid /> : ''}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           )}
-
         </Modal.Body>
         <Modal.Footer>
-          <Button href={'http://on-guard.org/import-help'} target={'_blank'}>Help</Button>
+          <Button href="http://on-guard.org/import-help" target="_blank">
+            Help
+          </Button>
           &nbsp;&nbsp;
           <Button onClick={() => this.setState({open: false})}>Cancel</Button>
           &nbsp;&nbsp;
@@ -208,16 +222,15 @@ export default class ImportUserModal extends React.Component {
           </Button>
         </Modal.Footer>
       </Modal>
-          {React.Children.map(this.props.children, child =>
-            // when you click whatever is the child element to this, open the modal
-            React.cloneElement(child, {
-              onClick: (...args) => {
-                if (child.props.onClick) child.props.onClick(...args)
-                this.setState({open: true})
-              }
-            })
-          )}
+      {React.Children.map(this.props.children, child =>
+        // when you click whatever is the child element to this, open the modal
+        React.cloneElement(child, {
+          onClick: (...args) => {
+            if (child.props.onClick) child.props.onClick(...args)
+            this.setState({open: true})
+          }
+        })
+      )}
     </span>
-      )
-
+  )
 }

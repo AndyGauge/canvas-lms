@@ -112,12 +112,17 @@ class PaymentBilling extends Component {
 
   render() {
     let ending_date
-    let quantity
-    if (this.state.subscription) {
+    let quantity = 0
+    let display_block = false
+    if (this.state.subscription.current_period_end) {
       ending_date = new Date(this.state.subscription.current_period_end * 1000).toLocaleDateString(
         'en-us'
       )
       quantity = this.state.item.quantity
+      if (ending_date > this.state.end_of_month) {
+        quantity += this.state.users_not_invoiced_count
+      }
+      display_block = true
     }
     const {stripe} = this.props
 
@@ -145,16 +150,19 @@ class PaymentBilling extends Component {
             </div>
             <div style={{marginBottom: '30px'}}>
               <h3>Upcoming Charges</h3>
-              <div style={{marginLeft: '20px'}}>
-                <p>
-                  On {this.state.end_of_month}, {this.state.users_not_invoiced_count} new users will
-                  be invoiced. <strong>${this.state.users_not_invoiced_count}.00</strong>
-                </p>
-                <p>
+
+              {display_block && (
+                <div style={{marginLeft: '20px'}}>
+                  <p>
+                    On {this.state.end_of_month}, {this.state.users_not_invoiced_count} new users will
+                    be invoiced. <strong>${this.state.users_not_invoiced_count}.00</strong>
+                  </p>
+                  <p>
                   On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed.{' '}
                   <strong>${quantity}.00</strong>
-                </p>
-              </div>
+                  </p>
+                </div>
+              )}
             </div>
             <div style={{marginLeft: '20px'}}>
               <p>

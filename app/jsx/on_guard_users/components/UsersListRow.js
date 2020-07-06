@@ -20,13 +20,13 @@ import React from 'react'
 import {string, func, shape, bool} from 'prop-types'
 import {Button} from '@instructure/ui-buttons'
 import {Tooltip} from '@instructure/ui-overlays'
-import {IconMasqueradeLine, IconMessageLine, IconEditLine} from '@instructure/ui-icons'
+import {IconMasqueradeLine, IconMessageLine, IconEditLine, IconTableDeleteTableSolid} from '@instructure/ui-icons'
 import I18n from 'i18n!account_course_user_search'
 import FriendlyDatetime from '../../shared/FriendlyDatetime'
 import CreateOrUpdateUserModal from './CreateOrUpdateUserModal'
 import UserLink from './UserLink'
 
-export default function UsersListRow({accountId, user, permissions, handleSubmitEditUserForm}) {
+export default function UsersListRow({accountId, user, permissions, handleSubmitEditUserForm, deleteUser}) {
   return (
     <tr>
       <th scope="row">
@@ -80,6 +80,11 @@ export default function UsersListRow({accountId, user, permissions, handleSubmit
             </span>
           </CreateOrUpdateUserModal>
         )}
+        <Tooltip tip={'Delete ' + user.name} >
+          <Button variant="icon" size="small" onClick={deleteUser}>
+            <IconTableDeleteTableSolid />
+          </Button>
+        </Tooltip>
       </td>
     </tr>
   )

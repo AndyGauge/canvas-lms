@@ -41,6 +41,16 @@ module OnGuard
       end
     end
 
+    def adjust_billing(user)
+
+      if user.invoiced_at
+        update_quantity(-1)
+      elsif user.workflow_state == "pre_registered"
+        # Don't bill the customer for users who never logged in
+        user.update(on_guard_organization: nil)
+      end
+    end
+
     def update_quantity(qty=1)
       begin
         subscription = Stripe::Customer.retrieve(@organization.stripe_customer_id).subscriptions.data.max

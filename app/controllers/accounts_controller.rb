@@ -1140,6 +1140,14 @@ class AccountsController < ApplicationController
         format.html { redirect_to account_users_url(@account) }
         format.json { render :json => @user || {} }
       end
+    elsif ( @user.on_guard_organization == @current_user.on_guard_organization &&
+            @current_user.on_guard_supervisor && @current_user != @user )
+      OnGuard::Payment.new(@current_user.on_guard_organization).adjust_billing(@user)
+      @user.remove_from_root_account(@account, updating_user: @current_user)
+      @user.remove_from_root_account(Account.find(@current_user.on_guard_organization.account_id), updating_user: @current_user)
+      respond_to do |format|
+        format.json { render :json => @user || {} }
+      end
     else
       render_unauthorized_action
     end
