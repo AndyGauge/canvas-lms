@@ -971,6 +971,7 @@ CanvasRails::Application.routes.draw do
     end
     post 'users/:id/import_users' => 'users#import_users', as: 'on_guard_import_users_upload'
     get 'users/:id/import_response/:response_id' => 'users#import_response', as: 'on_guard_import_response'
+    post 'users/:id/import/complete' => 'users#import_complete', as: 'on_guard_import_complete'
   end
 
   ### API routes ###

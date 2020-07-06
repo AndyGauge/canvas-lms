@@ -5,7 +5,7 @@ module OnGuard
 
     before_action :require_user, :only => [ 'index', 'import_response' ]
     before_action :require_registered_user, :only => 'index'
-    before_action :load_organization, :only => 'index'
+    before_action :load_organization, :only => [ 'index', 'import_response' ]
 
     def index
       @account = @organization.account
@@ -49,7 +49,12 @@ module OnGuard
     end
 
     def import_response
-      render plain: OnGuard::Import.new(User.find(params[:id]).attachments.not_deleted.find_by_id(params[:response_id]).open).to_json
+      render plain: OnGuard::Import.new(User.find(params[:id]).attachments.not_deleted.find_by_id(params[:response_id]).open, @organization).to_json
+    end
+
+    def import_complete
+      @current_user.on_guard_organization.delay.invite_users(params["_json"])
+      render json: {status: 'ok'}
     end
 
     private

@@ -21,7 +21,12 @@ module OnGuard
                              })
       Stripe::Invoice.finalize_invoice(invoice.id)
 
-      @organization.not_invoiced_users.each { |user| user.update(invoiced_at: Date.today) }
+      @organization.not_invoiced_users.each do |user|
+        user.update(invoiced_at: Date.today)
+      end
+      (@organization.users - @organization.account.users).each do |user|
+        user.update(on_guard_organization: nil)
+      end
 
     end
 

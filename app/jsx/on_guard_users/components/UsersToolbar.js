@@ -29,6 +29,7 @@ import CanvasSelect from 'jsx/shared/components/CanvasSelect'
 import I18n from 'i18n!account_course_user_search'
 import preventDefault from 'compiled/fn/preventDefault'
 import CreateOrUpdateUserModal from './CreateOrUpdateUserModal'
+import ImportUserModal from './ImportUserModal'
 
 export default function UsersToolbar(props) {
   function handleRoleSelect(event, value) {
@@ -54,21 +55,35 @@ export default function UsersToolbar(props) {
           }}
           onBlur={() => props.toggleSRMessage(true)}
           onFocus={() => props.toggleSRMessage(false)}
-          messages={!!props.errors.search_term && [{type: 'error', text: props.errors.search_term}]}
+          messages={
+            props.errors.search_term ? [{type: 'error', text: props.errors.search_term}] : []
+          }
         />
 
         <Grid.Col width="auto">
           {window.ENV.PERMISSIONS.can_create_users && (
-            <CreateOrUpdateUserModal
-              createOrUpdate="create"
-              url={`/accounts/${props.accountId}/users`}
-              afterSave={props.onApplyFilters} // update displayed results in case new user should appear
-            >
-              <Button aria-label={I18n.t('Add people')}>
-                <IconPlusLine />
-                {I18n.t('People')}
-              </Button>
-            </CreateOrUpdateUserModal>
+            <>
+              <CreateOrUpdateUserModal
+                createOrUpdate="create"
+                url={'/accounts/' + props.accountId +'/users'}
+                afterSave={props.onApplyFilters} // update displayed results in case new user should appear
+              >
+                <Button aria-label={I18n.t('Add people')}>
+                  <IconPlusLine />
+                  {I18n.t('People')}
+                </Button>
+              </CreateOrUpdateUserModal>
+              <ImportUserModal
+                url={'/on_guard/users/' + props.accountId + '/import_users'}
+                url_response={'/on_guard/users/' + props.accountId + '/import_response/'}
+                url_complete={'/on_guard/users/' + props.accountId + '/import/complete'}
+                afterSave={props.onApplyFilters}
+              >
+                <Button aria-label="Import" style-={{paddingLeft: 10}}>
+                  Import CSV
+                </Button>
+              </ImportUserModal>
+            </>
           )}{' '}
           {renderKabobMenu(props.accountId)}
         </Grid.Col>

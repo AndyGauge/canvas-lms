@@ -56,7 +56,7 @@ function updateDocumentTitleBreadcrumbAndActiveTab(activeTab) {
   // update the page title
   document.title = `${activeTab.title}: ${originalDocumentTitle}`
 
-  // toggle the breadcrumb between "Corses" and "People"
+  // toggle the breadcrumb between "Courses" and "People"
   $('#breadcrumbs a:last span').text(activeTab.title)
 }
 ready(() => {
