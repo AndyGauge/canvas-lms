@@ -320,6 +320,6 @@
   "resolutions": {
     "jquery": "https://github.com/ryankshaw/jquery.git#1.7.2-with-AMD-and-CommonJS",
     "graphael": "https://github.com/ryankshaw/graphael.git",
-    "node-sass": "4.7.2"
+    "node-sass": "4.12"
   }
 }

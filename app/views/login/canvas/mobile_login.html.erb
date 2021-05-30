@@ -22,7 +22,7 @@
 
   <div class="mobileLogin-Header">
     <span class="screenreader-only">
-      <%= t 'Canvas by Instructure' %>
+      <%= t 'On Guard Security Training' %>
     </span>
   </div>
 <%= form_for :pseudonym_session, :url => url_for({ action: :create }.merge(params.slice(:id).to_unsafe_h)), :html => {:id => "login_form", :class => "front face", :novalidate => 'novalidate', :autocomplete => "off" } do |f| %>
@@ -115,6 +115,9 @@
     </div>
   <% end %>
 <% end %>
+
+<%=render partial: 'login_footer' %>
+
 
 <%= # for plugin use
   render "shared/login_trailer" %>
