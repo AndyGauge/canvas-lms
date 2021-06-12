@@ -78,6 +78,8 @@ class ApplicationController < ActionController::Base
   after_action :add_csp_for_root
   after_action :teardown_live_events_context
 
+  before_action :on_guard_variables
+
   # multiple actions might be called on a single controller instance in specs
   before_action :clear_js_env if Rails.env.test?
 
@@ -1989,7 +1991,7 @@ class ApplicationController < ActionController::Base
   end
 
   def incomplete_registration?
-    @current_user && params[:registration_success] && @current_user.pre_registered?
+    false && @current_user && params[:registration_success] && @current_user.pre_registered?
   end
   helper_method :incomplete_registration?
 
@@ -2173,6 +2175,10 @@ class ApplicationController < ActionController::Base
     nil
   end
   helper_method :js_bundle
+
+  def on_guard_variables
+    @collapse_course_menu = true
+  end
 
   def add_body_class(*args)
     @body_classes ||= []

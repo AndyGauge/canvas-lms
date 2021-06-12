@@ -38,6 +38,7 @@ const props = {
   accountId: ENV.ACCOUNT_ID.toString(),
   roles: Array.prototype.slice.call(ENV.COURSE_ROLES),
   addUserUrls: ENV.URLS,
+  registrationLink: ENV.LINK_CODE,
   store
 }
 

@@ -27,7 +27,7 @@ end
 if RUBY_VERSION >= "2.4.0" && RUBY_VERSION < "2.6"
   ruby RUBY_VERSION, :engine => 'ruby', :engine_version => RUBY_VERSION
 elsif RUBY_VERSION >= "2.6.0" && RUBY_VERSION < "2.8"
-  $stderr.puts "Ruby 2.6+ support is untested" unless ENV['SUPPRESS_RUBY_WARNING']
+  #$stderr.puts "Ruby 2.6+ support is untested" unless ENV['SUPPRESS_RUBY_WARNING']
   ruby RUBY_VERSION, :engine => 'ruby', :engine_version => RUBY_VERSION
 else
   ruby '2.4.0', :engine => 'ruby', :engine_version => '2.4.0'

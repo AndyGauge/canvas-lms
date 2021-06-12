@@ -802,8 +802,8 @@ CanvasRails::Application.routes.draw do
   delete 'users/:user_id/mfa' => 'login/otp#destroy', as: :disable_mfa
   get 'file_session/clear' => 'login#clear_file_session', as: :clear_file_session
 
-  get 'register' => 'users#new'
-  get 'register_from_website' => 'users#new'
+  get 'register' => 'on_guard/users#new'
+  get 'register_from_website' => 'on_guard/users#new'
   get 'enroll/:self_enrollment_code' => 'self_enrollments#new', as: :enroll
   get 'services' => 'users#services'
   get 'search/bookmarks' => 'users#bookmark_search', as: :bookmark_search

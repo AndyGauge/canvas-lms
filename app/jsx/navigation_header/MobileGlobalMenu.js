@@ -178,7 +178,7 @@ export default class MobileGlobalMenu extends React.Component {
             )}
           </List.Item>
 
-          {window.ENV.current_user_roles && window.ENV.current_user_roles.includes('admin') && (
+          {false && window.ENV.current_user_roles && window.ENV.current_user_roles.includes('admin') && (
             <List.Item>
               <ToggleDetails
                 iconPosition="end"
@@ -317,37 +317,41 @@ export default class MobileGlobalMenu extends React.Component {
               </ToggleDetails>
             </List.Item>
           )}
-          <List.Item>
-            <Button variant="link" href="/calendar" size="small" fluidWidth>
-              <Flex>
-                <Flex.Item width="3rem">
-                  <IconCalendarMonthLine inline={false} size="small" />
-                </Flex.Item>
-                <Flex.Item>
-                  <Text size="medium">{I18n.t('Calendar')}</Text>
-                </Flex.Item>
-              </Flex>
-            </Button>
-          </List.Item>
-          <List.Item>
-            <Button variant="link" href="/inbox" size="small" fluidWidth>
-              <Flex>
-                <Flex.Item width="3rem">
-                  <IconInboxLine inline={false} size="small" />
-                </Flex.Item>
-                <Flex.Item>
-                  <Text size="medium">{I18n.t('Inbox')}</Text>
-                  {!!this.props.DesktopNavComponent.state.unread_count && (
-                    <Badge
-                      standalone
-                      margin="0 small"
-                      count={this.props.DesktopNavComponent.state.unread_count}
-                    />
-                  )}
-                </Flex.Item>
-              </Flex>
-            </Button>
-          </List.Item>
+          {false /* Calendar and inbox */ && (
+            <React.Fragment>
+              <List.Item>
+                <Button variant="link" href="/calendar" size="small" fluidWidth>
+                  <Flex>
+                    <Flex.Item width="3rem">
+                      <IconCalendarMonthLine inline={false} size="small" />
+                    </Flex.Item>
+                    <Flex.Item>
+                      <Text size="medium">{I18n.t('Calendar')}</Text>
+                    </Flex.Item>
+                  </Flex>
+                </Button>
+              </List.Item>
+              <List.Item>
+                <Button variant="link" href="/inbox" size="small" fluidWidth>
+                  <Flex>
+                    <Flex.Item width="3rem">
+                      <IconInboxLine inline={false} size="small" />
+                    </Flex.Item>
+                    <Flex.Item>
+                      <Text size="medium">{I18n.t('Inbox')}</Text>
+                      {!!this.props.DesktopNavComponent.state.unread_count && (
+                        <Badge
+                          standalone
+                          margin="0 small"
+                          count={this.props.DesktopNavComponent.state.unread_count}
+                        />
+                      )}
+                    </Flex.Item>
+                  </Flex>
+                </Button>
+              </List.Item>)
+            </React.Fragment>)}
+
           {this.state.externalTools.map(tool => (
             <List.Item key={tool.href}>
               <Button variant="link" href={tool.href} size="small" fluidWidth>
@@ -379,7 +383,7 @@ export default class MobileGlobalMenu extends React.Component {
             </List.Item>
           ))}
 
-          {true /* TODO: put a check for if we should show help */ && (
+          {false /* TODO: put a check for if we should show help */ && (
             <List.Item>
               <ToggleDetails
                 iconPosition="end"

@@ -23,11 +23,27 @@ body {
   background: #333;
 }
 
+body.onguard_background {
+  background-image: url('https://onguardassets.s3.us-west-2.amazonaws.com/account_1/attachments/53/ON-GUARD-BACKGROUND.png');
+  background-size: cover;
+}
+
 a {
   color: #2ca4e9;
   &:hover {
     color: #1873c8;
   }
+}
+
+input.error {
+  border: 1px solid #ff0000;
+}
+
+span.error-message {
+  font-size: .8rem;
+  color: #FF4040;
+  font-weight: bold;
+  padding-left:5px;
 }
 
 .registration-content {

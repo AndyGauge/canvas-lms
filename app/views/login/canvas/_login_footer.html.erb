@@ -1,7 +1,10 @@
 <footer role="contentinfo" id="footer" class="ic-Login-footer">
 
   <div id="footer-links" class="ic-Login-footer__links">
-    <a href="/on_guard/sign_up">Sign Up</a> | <a href="http://on-guard.org">On Guard Security Training</a>
+    <a href="/on_guard/sign_up">Sign Up</a> |
+    <%= link_to 'Register with code', Setting.get("registration_link", "/register_from_website"),
+                :id => 'register_link' %> |
+    <a href="http://on-guard.org">More Info</a>
   </div>
 
 </footer>

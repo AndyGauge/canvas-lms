@@ -44,6 +44,12 @@ $('body').click (e) ->
   unless $(e.target).closest('#registration_login, #login_form').length
     $loginForm?.hide()
 
+$(document).ready ->
+  signupDialog('studentDialog','Training Sign Up')
+  $('#student_join_code').val($('#join_param').val())
+
+#$('#sign-up').click()
+
 export default $('#registration_login').on 'click', preventDefault ->
   if $loginForm
     $loginForm.toggle()
