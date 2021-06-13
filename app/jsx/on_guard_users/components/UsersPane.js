@@ -143,7 +143,10 @@ export default class UsersPane extends React.Component {
         {this.state.srMessageDisplayed && (
           <SRSearchMessage collection={{data: users, loading: isLoading, links}} dataType="User" />
         )}
-        <span>Invite your users with this link: <a href={this.props.registrationLink}>{this.props.registrationLink}</a></span>
+        <span>
+          Invite your users with this link:{' '}
+          <a href={this.props.registrationLink}>{this.props.registrationLink}</a>
+        </span>
       </div>
     )
   }

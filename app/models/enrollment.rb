@@ -18,8 +18,7 @@
 
 require 'atom'
 
-class
-Enrollment < ActiveRecord::Base
+class Enrollment < ActiveRecord::Base
 
   SIS_TYPES = {
       'TeacherEnrollment' => 'teacher',

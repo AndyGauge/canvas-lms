@@ -24,7 +24,7 @@ body {
 }
 
 body.onguard_background {
-  background-image: url('https://onguardassets.s3.us-west-2.amazonaws.com/account_1/attachments/53/ON-GUARD-BACKGROUND.png');
+  background-image: var(--ic-brand-Login-body-bgd-image);
   background-size: cover;
 }
 

@@ -52,7 +52,7 @@ html, body {
 
 .mobileLogin-Header {
   z-index: 1;
-  background-image: url("https://onguardassets.s3.us-west-2.amazonaws.com/account_1/attachments/54/ON-GUARD-LOGO-%2528SITE-BANNER%2529.png");
+  background-image: var(--ic-brand-mobile-global-nav-logo);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 300px 112px;
