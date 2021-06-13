@@ -39,6 +39,7 @@ export default class UsersPane extends React.Component {
     }).isRequired,
     roles: UsersToolbar.propTypes.roles,
     onUpdateQueryParams: func.isRequired,
+    registrationLink: string,
     queryParams: shape({
       page: string,
       search_term: string,
@@ -143,6 +144,10 @@ export default class UsersPane extends React.Component {
         {this.state.srMessageDisplayed && (
           <SRSearchMessage collection={{data: users, loading: isLoading, links}} dataType="User" />
         )}
+        <span>
+          Invite your users with this link:{' '}
+          <a href={this.props.registrationLink}>{this.props.registrationLink}</a>
+        </span>
       </div>
     )
   }

@@ -26,6 +26,7 @@ import newParentDialog from 'jst/registration/newParentDialog'
 import samlDialog from 'jst/registration/samlDialog'
 import addPrivacyLinkToDialog from '../util/addPrivacyLinkToDialog'
 import htmlEscape from 'str/htmlEscape'
+import '../jquery/fixDialogButtons'
 import '../jquery/validate'
 import 'jquery.instructure_forms'
 import 'jquery.instructure_date_and_time'
@@ -49,7 +50,7 @@ termsHtml = ({terms_of_use_url, privacy_policy_url}) ->
 signupDialog = (id, title, path=null) ->
   return unless templates[id]
   $node = $nodes[id] ?= $('<div />')
-  path ||= "/users"
+  path ||= "/on_guard/users"
   html = templates[id](
     account: ENV.ACCOUNT.registration_settings
     terms_required: ENV.ACCOUNT.terms_required
@@ -75,11 +76,14 @@ signupDialog = (id, title, path=null) ->
       else
         window.location = "/?registration_success=1"
     error: (data) =>
+      $('.error').removeClass('error')
+      $('.error-message').remove()
       if data.error
-        error_msg = data.error.message
-        $("input[name='#{htmlEscape data.error.input_name}']").
-        next('.error_message').
-        text(htmlEscape error_msg)
+        for error,i in data.error
+          error_msg = "<span class='error-message'>"+error.message+"</span>"
+          error_input = $("input[name='#{htmlEscape error.input_name}']")
+          error_input.addClass("error")
+          error_input.after(error_msg)
         $.screenReaderFlashMessage(error_msg)
 
   $node.dialog
@@ -95,8 +99,8 @@ signupDialog = (id, title, path=null) ->
       signupDialog.teardown?()
       $('.error_box').filter(':visible').remove()
   $node.fixDialogButtons()
-  unless ENV.ACCOUNT.terms_required # term verbiage has a link to PP, so this would be redundant
-    addPrivacyLinkToDialog($node)
+  #unless ENV.ACCOUNT.terms_required # term verbiage has a link to PP, so this would be redundant
+    #addPrivacyLinkToDialog($node)
 
 signupDialog.templates = templates
 export default signupDialog

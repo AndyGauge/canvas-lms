@@ -101,14 +101,14 @@ gem 'parallel', '1.18.0', require: false
 gem 'retriable', '1.4.1'
 gem 'rake', '12.3.1'
 gem 'ratom-nokogiri', '0.10.8', require: false
-gem 'rdiscount', '1.6.8', require: false
+gem 'rdiscount', '2.2.0.2', require: false
 gem 'ritex', '1.0.1', require: false
 
 gem 'rotp', '5.1.0', require: false
 gem 'net-ldap', '0.16.1', require: false
 gem 'ruby-duration', '3.2.3', require: false
 gem 'saml2', '3.0.8'
-  gem 'nokogiri-xmlsec-instructure', '0.9.6', require: false
+  gem 'nokogiri-xmlsec-instructure', '0.9.7', require: false
 gem 'rubycas-client', '2.3.9', require: false
 gem 'rubyzip', '1.2.2', require: 'zip'
 gem 'safe_yaml', '1.0.5', require: false

@@ -178,49 +178,53 @@ export default class MobileGlobalMenu extends React.Component {
             )}
           </List.Item>
 
-          {window.ENV.current_user_roles && window.ENV.current_user_roles.includes('admin') && (
-            <List.Item>
-              <ToggleDetails
-                iconPosition="end"
-                fluidWidth
-                onToggle={ensureLoaded('accounts')}
-                summary={
-                  <Flex padding="xx-small small">
-                    <Flex.Item width="3rem">
-                      <IconAdminLine inline={false} size="small" color="brand" />
-                    </Flex.Item>
-                    <Flex.Item>
-                      <Text color="brand">{I18n.t('Admin')}</Text>
-                    </Flex.Item>
-                  </Flex>
-                }
-              >
-                <List variant="unstyled" itemSpacing="small" margin="0 0 0 x-large">
-                  {this.props.DesktopNavComponent.state.accountsAreLoaded ? (
-                    this.props.DesktopNavComponent.state.accounts
-                      .map(account => (
-                        <List.Item key={account.id}>
-                          <Button variant="link" fluidWidth href={`/accounts/${account.id}`}>
-                            <ActiveText url={`/accounts/${account.id}`}>{account.name}</ActiveText>
-                          </Button>
-                        </List.Item>
-                      ))
-                      .concat([
-                        <List.Item key="all">
-                          <Button variant="link" fluidWidth href="/accounts">
-                            {I18n.t('All Accounts')}
-                          </Button>
-                        </List.Item>
-                      ])
-                  ) : (
-                    <List.Item>
-                      <Spinner size="small" renderTitle={I18n.t('Loading')} />
-                    </List.Item>
-                  )}
-                </List>
-              </ToggleDetails>
-            </List.Item>
-          )}
+          {false &&
+            window.ENV.current_user_roles &&
+            window.ENV.current_user_roles.includes('admin') && (
+              <List.Item>
+                <ToggleDetails
+                  iconPosition="end"
+                  fluidWidth
+                  onToggle={ensureLoaded('accounts')}
+                  summary={
+                    <Flex padding="xx-small small">
+                      <Flex.Item width="3rem">
+                        <IconAdminLine inline={false} size="small" color="brand" />
+                      </Flex.Item>
+                      <Flex.Item>
+                        <Text color="brand">{I18n.t('Admin')}</Text>
+                      </Flex.Item>
+                    </Flex>
+                  }
+                >
+                  <List variant="unstyled" itemSpacing="small" margin="0 0 0 x-large">
+                    {this.props.DesktopNavComponent.state.accountsAreLoaded ? (
+                      this.props.DesktopNavComponent.state.accounts
+                        .map(account => (
+                          <List.Item key={account.id}>
+                            <Button variant="link" fluidWidth href={`/accounts/${account.id}`}>
+                              <ActiveText url={`/accounts/${account.id}`}>
+                                {account.name}
+                              </ActiveText>
+                            </Button>
+                          </List.Item>
+                        ))
+                        .concat([
+                          <List.Item key="all">
+                            <Button variant="link" fluidWidth href="/accounts">
+                              {I18n.t('All Accounts')}
+                            </Button>
+                          </List.Item>
+                        ])
+                    ) : (
+                      <List.Item>
+                        <Spinner size="small" renderTitle={I18n.t('Loading')} />
+                      </List.Item>
+                    )}
+                  </List>
+                </ToggleDetails>
+              </List.Item>
+            )}
           <List.Item>
             <ToggleDetails
               iconPosition="end"
@@ -317,37 +321,43 @@ export default class MobileGlobalMenu extends React.Component {
               </ToggleDetails>
             </List.Item>
           )}
-          <List.Item>
-            <Button variant="link" href="/calendar" size="small" fluidWidth>
-              <Flex>
-                <Flex.Item width="3rem">
-                  <IconCalendarMonthLine inline={false} size="small" />
-                </Flex.Item>
-                <Flex.Item>
-                  <Text size="medium">{I18n.t('Calendar')}</Text>
-                </Flex.Item>
-              </Flex>
-            </Button>
-          </List.Item>
-          <List.Item>
-            <Button variant="link" href="/inbox" size="small" fluidWidth>
-              <Flex>
-                <Flex.Item width="3rem">
-                  <IconInboxLine inline={false} size="small" />
-                </Flex.Item>
-                <Flex.Item>
-                  <Text size="medium">{I18n.t('Inbox')}</Text>
-                  {!!this.props.DesktopNavComponent.state.unread_count && (
-                    <Badge
-                      standalone
-                      margin="0 small"
-                      count={this.props.DesktopNavComponent.state.unread_count}
-                    />
-                  )}
-                </Flex.Item>
-              </Flex>
-            </Button>
-          </List.Item>
+          {false /* Calendar and inbox */ && (
+            <>
+              <List.Item>
+                <Button variant="link" href="/calendar" size="small" fluidWidth>
+                  <Flex>
+                    <Flex.Item width="3rem">
+                      <IconCalendarMonthLine inline={false} size="small" />
+                    </Flex.Item>
+                    <Flex.Item>
+                      <Text size="medium">{I18n.t('Calendar')}</Text>
+                    </Flex.Item>
+                  </Flex>
+                </Button>
+              </List.Item>
+              <List.Item>
+                <Button variant="link" href="/inbox" size="small" fluidWidth>
+                  <Flex>
+                    <Flex.Item width="3rem">
+                      <IconInboxLine inline={false} size="small" />
+                    </Flex.Item>
+                    <Flex.Item>
+                      <Text size="medium">{I18n.t('Inbox')}</Text>
+                      {!!this.props.DesktopNavComponent.state.unread_count && (
+                        <Badge
+                          standalone
+                          margin="0 small"
+                          count={this.props.DesktopNavComponent.state.unread_count}
+                        />
+                      )}
+                    </Flex.Item>
+                  </Flex>
+                </Button>
+              </List.Item>
+              )
+            </>
+          )}
+
           {this.state.externalTools.map(tool => (
             <List.Item key={tool.href}>
               <Button variant="link" href={tool.href} size="small" fluidWidth>
@@ -379,7 +389,7 @@ export default class MobileGlobalMenu extends React.Component {
             </List.Item>
           ))}
 
-          {true /* TODO: put a check for if we should show help */ && (
+          {false /* TODO: put a check for if we should show help */ && (
             <List.Item>
               <ToggleDetails
                 iconPosition="end"

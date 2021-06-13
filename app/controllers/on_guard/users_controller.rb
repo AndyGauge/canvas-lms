@@ -2,6 +2,7 @@ module OnGuard
   class UsersController < ApplicationController
 
     include Api::V1::Attachment
+    include Api::V1::Account
 
     before_action :require_user, :only => [ 'index', 'import_response' ]
     before_action :require_registered_user, :only => 'index'
@@ -23,6 +24,7 @@ module OnGuard
                  customized_login_handle_name: @account.root_account.customized_login_handle_name,
                  delegated_authentication: @account.root_account.delegated_authentication?,
                  SHOW_SIS_ID_IN_NEW_USER_FORM: @account.root_account.allow_sis_import && @account.root_account.grants_right?(@current_user, session, :manage_sis),
+                 LINK_CODE: register_url(join: @organization.link_code),
                  PERMISSIONS: {
                      can_read_course_list: false,
                      can_read_roster: supervisor?,
@@ -38,6 +40,26 @@ module OnGuard
                  }
              })
       render html: '', layout: true
+    end
+
+    def create
+      org=OnGuard::Organization.find_by_link_code(params[:user][:self_enrollment_code])
+      errors = OnGuard::RegistrationValidator.new(params[:user], params[:pseudonym]).errors
+      errors << {message: "Invalid Link Code", input_name: "user[self_enrollment_code]"} unless org
+
+      render json: {error: errors}.to_json, status: 400 and return unless errors.empty?
+      org.register_user(params[:user][:name], params[:pseudonym])
+
+    end
+
+    def new
+      @body_classes << ['onguard_background']
+      return redirect_to(root_url) if @current_user
+      @join_code = params[:join]
+      run_login_hooks
+      js_env :ACCOUNT => account_json(@domain_root_account, nil, session, ['registration_settings']),
+             :PASSWORD_POLICY => @domain_root_account.password_policy
+      render :layout => 'bare'
     end
 
     def import_users
