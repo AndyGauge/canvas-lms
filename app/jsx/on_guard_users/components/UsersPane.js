@@ -39,6 +39,7 @@ export default class UsersPane extends React.Component {
     }).isRequired,
     roles: UsersToolbar.propTypes.roles,
     onUpdateQueryParams: func.isRequired,
+    registrationLink: string,
     queryParams: shape({
       page: string,
       search_term: string,
