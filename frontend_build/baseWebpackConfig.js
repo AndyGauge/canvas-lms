@@ -293,7 +293,11 @@ module.exports = {
 
   plugins: [
     new FilterWarningsPlugin({
-      exclude: /Critical dependency: the request of a dependency is an expression/
+      exclude: [
+        /Critical dependency: the request of a dependency is an expression/,
+        /EntrypointsOverSizeLimitWarning/,
+        /AssetsOverSizeLimitWarning/
+      ]
     }),
     // return a non-zero exit code if there are any warnings so we don't continue compiling assets if webpack fails
     function() {
