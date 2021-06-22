@@ -1,11 +1,20 @@
 module OnGuard
   class RegistrationValidator
-    def initialize(user, pseudonym)
+    def initialize(user, pseudonym, organization)
       @user = user
       @pseudonym = pseudonym
+      @organization = organization
     end
 
     def errors
+      if @organization.trusted?
+        errors_trusted
+      else
+        errors_untrusted
+      end
+    end
+
+    def errors_trusted
       @errors = []
       if @user[:name].blank?
         @errors << {input_name: 'user[name]', message: 'Cannot be blank'}
@@ -20,6 +29,14 @@ module OnGuard
       end
       unless @pseudonym[:password] == @pseudonym[:password_confirmation]
         @errors << {input_name: 'pseudonym[password_confirmation]', message: 'Must match'}
+      end
+      @errors
+    end
+
+    def errors_untrusted
+      @errors = []
+      if @user[:name].blank?
+        @errors << {input_name: 'user[name]', message: 'Cannot be blank'}
       end
       @errors
     end

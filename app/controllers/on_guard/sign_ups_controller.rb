@@ -12,14 +12,18 @@ module OnGuard
     def create
       @sign_up = OnGuard::SignUp.new(params, load_account).create
       successful_login(@sign_up.user, @sign_up.pseudonym, false, false)
-      render json: {status: @sign_up.success, user_id: @sign_up.user.id}
+      render json: { status:    @sign_up.success,
+                     user_id:   @sign_up.user.id,
+                     auth_code: @sign_up.auth_code,
+                     link:      register_url(join: @sign_up.auth_code) }
     end
 
-    # I don't think this is called anywhere, it does nothing
+    # Currently responsible for setting Trust
     def update
-      @sign_up = OnGuard::SignUp.new(params).update
-      if @sign_up.complete
-        redirect_to @sign_up.user
+      if OnGuard::SignUp.new(params).update
+        render json: {status: 'addusers'}
+      else
+        render json: {status: 'error', error: 'unable to update'}, status: 400
       end
     end
 

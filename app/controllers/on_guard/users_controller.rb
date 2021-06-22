@@ -44,7 +44,7 @@ module OnGuard
 
     def create
       org=OnGuard::Organization.find_by_link_code(params[:user][:self_enrollment_code])
-      errors = OnGuard::RegistrationValidator.new(params[:user], params[:pseudonym]).errors
+      errors = OnGuard::RegistrationValidator.new(params[:user], params[:pseudonym], org).errors
       errors << {message: "Invalid Link Code", input_name: "user[self_enrollment_code]"} unless org
 
       render json: {error: errors}.to_json, status: 400 and return unless errors.empty?
@@ -56,9 +56,17 @@ module OnGuard
       @body_classes << ['onguard_background']
       return redirect_to(root_url) if @current_user
       @join_code = params[:join]
+      if org=OnGuard::Organization.find_by_link_code(@join_code)
+        @trusted = org.trusted?
+      else
+        @trusted = true
+      end
       run_login_hooks
-      js_env :ACCOUNT => account_json(@domain_root_account, nil, session, ['registration_settings']),
-             :PASSWORD_POLICY => @domain_root_account.password_policy
+      js_env({
+                 :ACCOUNT => account_json(@domain_root_account, nil, session, ['registration_settings']),
+                 :PASSWORD_POLICY => @domain_root_account.password_policy,
+                 :TRUST => @trusted
+             })
       render :layout => 'bare'
     end
 
