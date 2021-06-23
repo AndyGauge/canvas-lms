@@ -133,7 +133,7 @@ export default function PaymentSignup(props) {
 
   const handleChangeTrusted = () => {
     setLoading(true)
-    const new_level = (trusted == 'trusted') ? 'untrusted' : 'trusted'
+    const new_level = trusted == 'trusted' ? 'untrusted' : 'trusted'
     fetch('/on_guard/sign_up/', {
       method: 'put',
       body: JSON.stringify({
@@ -155,7 +155,6 @@ export default function PaymentSignup(props) {
         setStatus('error')
         setErr(error)
       })
-
   }
 
   const handleAddUsers = () => {
@@ -284,11 +283,11 @@ export default function PaymentSignup(props) {
           onDismiss={goHome}
         >
           <Modal.Body>
-            <h3>
-              By default we collect no additional information
-            </h3>
-            <p>Send links to your users, they will register with their names and no other identifying information.
-              We take security seriously, and the best way to protect your data is to not collect it at all.
+            <h3>By default we collect no additional information</h3>
+            <p>
+              Send links to your users, they will register with their names and no other identifying
+              information. We take security seriously, and the best way to protect your data is to
+              not collect it at all.
             </p>
             <ul>
               <li>No risk of information disclosure</li>
@@ -296,10 +295,15 @@ export default function PaymentSignup(props) {
               <li>No messy ports to open to the world</li>
               <li>No password resets for users</li>
             </ul>
-            <p>Send your team this link: <a href={linkUrl}>{linkUrl}</a></p>
+            <p>
+              Send your team this link: <a href={linkUrl}>{linkUrl}</a>
+            </p>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="primary" onClick={goHome}>Accept</Button> &nbsp;
+            <Button variant="primary" onClick={goHome}>
+              Accept
+            </Button>{' '}
+            &nbsp;
             <Button variant="secondary" onClick={handleChangeTrusted}>
               Track via E-mail
             </Button>
@@ -344,7 +348,8 @@ export default function PaymentSignup(props) {
             <Button onClick={goHome}>Skip</Button> &nbsp;
             <Button variant="secondary" onClick={handleChangeTrusted}>
               Do Not Track
-            </Button> &nbsp;
+            </Button>{' '}
+            &nbsp;
             <Button variant="primary" onClick={() => setStatus('import')}>
               Import
             </Button>
@@ -439,7 +444,7 @@ export default function PaymentSignup(props) {
     default:
       /**
        Initial Sign Up form, step 1
-       **/
+       * */
       return (
         <div>
           <div className="loading-spinner">
