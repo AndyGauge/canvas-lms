@@ -29,7 +29,7 @@ import {Text} from '@instructure/ui-elements'
 import {TextInput} from '@instructure/ui-text-input'
 import {uploadFiles} from '../../shared/upload_file'
 
-export default function PaymentSignup() {
+export default function PaymentSignup(props) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [organization, setOrganization] = useState('')
@@ -37,7 +37,10 @@ export default function PaymentSignup() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState('')
+  const [authCode, setAuthCode] = useState('')
   const [userId, setUserId] = useState(false)
+  const [linkUrl, setLinkUrl] = useState('')
+  const [trusted, setTrusted] = useState('untrusted')
   const [users, setUsers] = useState([])
   const [newName, setnewName] = useState('')
   const [newEmail, setNewEmail] = useState('')
@@ -103,6 +106,8 @@ export default function PaymentSignup() {
             .then(data => {
               setStatus(data.status)
               setUserId(data.user_id)
+              setLinkUrl(data.link)
+              setAuthCode(data.auth_code)
               setLoading(false)
             })
             .catch(error => {
@@ -124,6 +129,32 @@ export default function PaymentSignup() {
       delete errs.stripeError
     }
     setErr(errs)
+  }
+
+  const handleChangeTrusted = () => {
+    setLoading(true)
+    const new_level = trusted == 'trusted' ? 'untrusted' : 'trusted'
+    fetch('/on_guard/sign_up/', {
+      method: 'put',
+      body: JSON.stringify({
+        authCode,
+        userId,
+        trust: new_level
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setStatus(data.status)
+        setTrusted(new_level)
+        setLoading(false)
+      })
+      .catch(error => {
+        setStatus('error')
+        setErr(error)
+      })
   }
 
   const handleAddUsers = () => {
@@ -239,7 +270,49 @@ export default function PaymentSignup() {
   switch (status) {
     case 'active':
       /**
-       Add additional users, step 2
+       Opt in to trusted model
+       */
+      return (
+        <Modal
+          as="form"
+          onSubmit={goHome}
+          open
+          size="small"
+          label="Trust Level"
+          shouldCloseOnDocumentClick={false}
+          onDismiss={goHome}
+        >
+          <Modal.Body>
+            <h3>By default we collect no additional information</h3>
+            <p>
+              Send links to your users, they will register with their names and no other identifying
+              information. We take security seriously, and the best way to protect your data is to
+              not collect it at all.
+            </p>
+            <ul>
+              <li>No risk of information disclosure</li>
+              <li>No service account and synchronization service to maintain</li>
+              <li>No messy ports to open to the world</li>
+              <li>No password resets for users</li>
+            </ul>
+            <p>
+              Send your team this link: <a href={linkUrl}>{linkUrl}</a>
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={goHome}>
+              Accept
+            </Button>{' '}
+            &nbsp;
+            <Button variant="secondary" onClick={handleChangeTrusted}>
+              Track via E-mail
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )
+    case 'addusers':
+      /**
+       Add additional users
        */
       return (
         <Modal
@@ -273,6 +346,10 @@ export default function PaymentSignup() {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={goHome}>Skip</Button> &nbsp;
+            <Button variant="secondary" onClick={handleChangeTrusted}>
+              Do Not Track
+            </Button>{' '}
+            &nbsp;
             <Button variant="primary" onClick={() => setStatus('import')}>
               Import
             </Button>
@@ -337,7 +414,7 @@ export default function PaymentSignup() {
       )
     case 'error':
       /**
-       Add additional users, step 2
+       Problems
        */
       return (
         <Modal
@@ -365,9 +442,9 @@ export default function PaymentSignup() {
         </Modal>
       )
     default:
-      /*
+      /**
        Initial Sign Up form, step 1
-       */
+       * */
       return (
         <div>
           <div className="loading-spinner">

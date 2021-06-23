@@ -225,7 +225,7 @@ class Pseudonym < ActiveRecord::Base
   end
 
   def validate_unique_id
-    if (!self.account || self.account.email_pseudonyms) && !self.deleted?
+    if false && (!self.account || self.account.email_pseudonyms) && !self.deleted?
       unless self.unique_id.present? && EmailAddressValidator.valid?(self.unique_id)
         self.errors.add(:unique_id, "not_email")
         throw :abort

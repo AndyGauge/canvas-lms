@@ -53,6 +53,7 @@ signupDialog = (id, title, path=null) ->
   path ||= "/on_guard/users"
   html = templates[id](
     account: ENV.ACCOUNT.registration_settings
+    trusted: ENV.TRUST
     terms_required: ENV.ACCOUNT.terms_required
     terms_html: termsHtml(ENV.ACCOUNT)
     path: path
