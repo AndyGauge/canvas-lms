@@ -966,6 +966,7 @@ CanvasRails::Application.routes.draw do
       get 'stripe', on: :member
       post 'update_payment', on: :member
     end
+    resources :billing_plans
     resource :sign_up do
       post 'complete', on: :collection
     end

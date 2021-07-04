@@ -141,11 +141,11 @@ class PaymentBilling extends Component {
         </ScreenReaderContent>
         <TabList onChange={this.onTabChanged}>
           <TabList.Panel title="Summary">
-            <div className="reminder" style={{marginBottom: '30px'}}>
-              <h2>CHARGE POLICY</h2>
+            <div className="reminder" style={{marginBottom: '30px', maxWidth: 400}}>
+              <h2 style={{textAlign: 'center'}}>{this.props.billing_plan.name}</h2>
               <div className="body">
-                <p>On Guard bills $1 when you sign up, that covers your security training.</p>
-                <p>Add users at any time. We charge for those users at the end of every month</p>
+                <p>{this.props.billing_plan.description}</p>
+                <h3 style={{textAlign: 'center'}}>{this.props.billing_plan.display_price}</h3>
               </div>
             </div>
             <div style={{marginBottom: '30px'}}>
@@ -153,14 +153,7 @@ class PaymentBilling extends Component {
 
               {display_block && (
                 <div style={{marginLeft: '20px'}}>
-                  <p>
-                    On {this.state.end_of_month}, {this.state.users_not_invoiced_count} new users will
-                    be invoiced. <strong>${this.state.users_not_invoiced_count}.00</strong>
-                  </p>
-                  <p>
-                  On {ending_date}, {quantity} user{quantity == 1 ? '' : 's'} will be renewed.{' '}
-                  <strong>${quantity}.00</strong>
-                  </p>
+                  <p>On {ending_date}, your subscription will be renewed. </p>
                 </div>
               )}
             </div>

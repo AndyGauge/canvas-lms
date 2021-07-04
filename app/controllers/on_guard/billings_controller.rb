@@ -2,17 +2,18 @@ module OnGuard
   class BillingsController < ApplicationController
     before_action :require_user
     before_action :require_registered_user
-    before_action :load_organization
+    before_action :load_organization_supervisor
     skip_before_action :verify_authenticity_token
 
 
     def show
+      js_env({BILLING_PLAN: @organization.billing_plan.as_json(only: [:id, :name, :display_price, :description])})
       js_bundle :payment_billing
       render html: '<div id="root"></div>'.html_safe, layout:'application'
     end
 
     def stripe
-      customer_id = @current_user.on_guard_organization.stripe_customer_id
+      customer_id = @organization.stripe_customer_id
 
       customer = Stripe::Customer.retrieve({ id: customer_id })
       invoice_thread = Thread.new { Stripe::Invoice.list({customer: customer_id }) }
@@ -43,12 +44,10 @@ module OnGuard
       end
 
     end
-
     private
-    def load_organization
+    def load_organization_supervisor
       @organization = @current_user.on_guard_organization
-      redirect_to '/' unless @current_user.on_guard_supervisor&.on_guard_organization == @organization || !@organization
+      redirect_to '/' unless @organization && @current_user.supervisor?(@organization)
     end
-
   end
 end
