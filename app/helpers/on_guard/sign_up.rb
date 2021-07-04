@@ -10,7 +10,7 @@ module OnGuard
       raise 'Invalid Email' unless EmailAddressValidator.valid?(cc_addr)
 
       @user = User.create!(@params.require( :user ).permit( :name ))
-      @organization  = OnGuard::Organization::Untrusted.create! name: @params[:organization]
+      @organization  = OnGuard::Organization::Untrusted.create! name: @params[:organization], billing_plan: OnGuard::BillingPlan.default
       @user.on_guard_organization = @organization
       @user.create_on_guard_supervisor! on_guard_organization: @organization
       @user.workflow_state='registered'
@@ -26,9 +26,9 @@ module OnGuard
       AccountUser.create user: @user, account: @organization.account, role_id: 3  #StudentEnrollment role
       AuthenticationProvider.create(account: @organization.account, auth_type: 'canvas')
 
-      Course.published.where(auto_assigned: true).each do |c|
-        StudentEnrollment.create(course: c, user: @user)
-      end
+      # Course.published.where(auto_assigned: true).each do |c|
+      #   StudentEnrollment.create(course: c, user: @user)
+      # end
 
       @success = @organization.payment.create_customer(@params[:paymentMethod])
       return self

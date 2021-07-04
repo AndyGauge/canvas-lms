@@ -47,7 +47,19 @@ export default function PaymentSignup(props) {
   const [err, setErr] = useState({stripeError: 'Payment Card required'})
   const [showValidation, setShowValidation] = useState(false)
   const [fileMessages, setFileMessages] = useState([])
-  const [importPreview, setImportPreview] = useState('')
+  // const [importPreview, setImportPreview] = useState('')
+  const [priceDetail, setPriceDetail] = useState({
+    borderRadius: 7,
+    background: 'white',
+    height: 110,
+    border: '1px solid black',
+    position: 'absolute',
+    zIndex: 1,
+    top: -91,
+    left: '39%',
+    padding: 6,
+    visibility: 'hidden'
+  })
   const stripe = useStripe()
   const elements = useElements()
 
@@ -266,6 +278,15 @@ export default function PaymentSignup(props) {
       </span>
     )
   }
+
+  const changePriceDetail = () => {
+    const price = {
+      ...priceDetail,
+      visibility: priceDetail.visibility === 'hidden' ? 'visible' : 'hidden'
+    }
+    setPriceDetail(price)
+  }
+
 
   switch (status) {
     case 'active':
@@ -509,8 +530,30 @@ export default function PaymentSignup(props) {
                 />
               </FormFieldGroup>
               <span className="cMIPy_bGBk" style={{marginTop: 10}}>
-                <span className="bNerA_bGBk bNerA_NmrE bNerA_dBtH bNerA_bBOa bNerA_buDT bNerA_DpxJ">
-                  <span className="fCrpb_bGBk fCrpb_egrg">Payment Details</span>
+                <span
+                  className="bNerA_bGBk bNerA_NmrE bNerA_dBtH bNerA_bBOa bNerA_buDT bNerA_DpxJ"
+                  style={{position: 'relative'}}
+                >
+                  <span className="fCrpb_bGBk fCrpb_egrg" style={{display: 'inline'}}>
+                    Payment Details
+                  </span>
+                  <span
+                    style={{
+                      marginLeft: 9,
+                      borderRadius: 7,
+                      border: '1px solid black',
+                      fontSize: 12,
+                      padding: 3,
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => changePriceDetail()}
+                  >
+                    $25
+                  </span>
+                  <div style={priceDetail}>
+                    <h3>Business Security Awareness</h3>
+                    <p>security training for business with up to 100 employees</p>
+                  </div>
                 </span>
               </span>
               <div

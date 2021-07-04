@@ -4,6 +4,7 @@ module OnGuard
     has_many :supervisors, :foreign_key => 'on_guard_organization_id'
     has_many :addresses, :foreign_key => 'on_guard_organization_id'
     belongs_to :account
+    belongs_to :billing_plan, class_name: 'OnGuard::BillingPlan',:foreign_key =>'on_guard_billing_plan_id'
     ROOT_ACCOUNT = Account.find_by_id(1)
 
     before_create :generate_account

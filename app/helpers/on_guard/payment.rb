@@ -5,6 +5,8 @@
 module OnGuard
   class Payment
 
+    attr_reader :organization
+
     def initialize(organization)
       @organization = organization
     end
@@ -30,7 +32,7 @@ module OnGuard
                                         customer: stripe_customer.id,
                                         items: [
                                             {
-                                                plan: ENV.fetch('STRIPE_PLAN')
+                                                price: organization.billing_plan.price
                                             }
                                         ],
                                         expand: ['latest_invoice.payment_intent'],

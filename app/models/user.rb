@@ -2920,4 +2920,9 @@ class User < ActiveRecord::Base
   def pronouns=(pronouns)
     write_attribute(:pronouns, untranslate_pronouns(pronouns))
   end
+
+  def supervisor?(organization)
+    return false unless on_guard_supervisor
+    on_guard_supervisor.on_guard_organization == organization
+  end
 end
