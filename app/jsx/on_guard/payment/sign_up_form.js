@@ -287,7 +287,6 @@ export default function PaymentSignup(props) {
     setPriceDetail(price)
   }
 
-
   switch (status) {
     case 'active':
       /**
