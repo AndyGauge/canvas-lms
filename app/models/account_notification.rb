@@ -253,7 +253,7 @@ class AccountNotification < ActiveRecord::Base
 
   def applicable_user_ids
     roles = self.account_notification_roles.preload(:role).to_a.map(&:role)
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       self.class.applicable_user_ids_for_account_and_roles(self.account, roles)
     end
   end

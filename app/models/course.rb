@@ -655,7 +655,7 @@ class Course < ActiveRecord::Base
 
   def associated_accounts
     Rails.cache.fetch_with_batched_keys("associated_accounts", batch_object: self, batched_keys: :account_associations) do
-      Shackles.activate(:master) do
+      GuardRail.activate(:primary) do
         if association(:course_account_associations).loaded? && !association(:non_unique_associated_accounts).loaded?
           accounts = course_account_associations.map(&:account).uniq
         else
@@ -1367,7 +1367,7 @@ class Course < ActiveRecord::Base
       key = ['has_assignment_group', self.global_id].cache_key
       return if Rails.cache.read(key)
       if self.assignment_groups.active.empty?
-        Shackles.activate(:master) do
+        GuardRail.activate(:primary) do
           self.assignment_groups.create!(name: t('#assignment_group.default_name', "Assignments"))
         end
       end
@@ -2178,7 +2178,7 @@ class Course < ActiveRecord::Base
       section.course = self
       section.root_account_id = self.root_account_id
       unless new_record?
-        Shackles.activate(:master) do
+        GuardRail.activate(:primary) do
           CourseSection.unique_constraint_retry do |retry_count|
             if retry_count > 0
               section = course_sections.active.where(default_section: true).first
@@ -2409,7 +2409,7 @@ class Course < ActiveRecord::Base
     self.shard.activate do
       RequestCache.cache(key, user, self, opts) do
         Rails.cache.fetch_with_batched_keys([key, self.global_asset_string, opts].compact.cache_key, batch_object: user, batched_keys: :enrollments) do
-          Shackles.activate(:master) do
+          GuardRail.activate(:primary) do
             yield
           end
         end
@@ -2760,7 +2760,7 @@ class Course < ActiveRecord::Base
     # make sure t() is called before we switch to the slave, in case we update the user's selected locale in the process
     default_tabs = Course.default_tabs
 
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       # We will by default show everything in default_tabs, unless the teacher has configured otherwise.
       tabs = self.tab_configuration.compact
       settings_tab = default_tabs[-1]

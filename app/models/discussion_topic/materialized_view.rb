@@ -37,7 +37,7 @@ class DiscussionTopic::MaterializedView < ActiveRecord::Base
     discussion_topic.shard.activate do
       # first try to pull the view from the slave. we can't just do this in the
       # unique_constraint_retry since it begins a transaction.
-      view = Shackles.activate(:slave) { self.where(discussion_topic_id: discussion_topic).first }
+      view = GuardRail.activate(:secondary) { self.where(discussion_topic_id: discussion_topic).first }
       if !view
         # if the view wasn't found, drop into the unique_constraint_retry
         # transaction loop on master.
@@ -159,7 +159,7 @@ class DiscussionTopic::MaterializedView < ActiveRecord::Base
     entry_lookup = {}
     view = []
     user_ids = Set.new
-    Shackles.activate(use_master ? :master : :slave) do
+    GuardRail.activate(use_master ? :master : :slave) do
       all_entries.find_each do |entry|
         json = discussion_entry_api_json([entry], discussion_topic.context, nil, nil, []).first
         entry_lookup[entry.id] = json

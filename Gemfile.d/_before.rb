@@ -16,7 +16,7 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-gem 'bundler', '>= 1.13.3', '<= 2.1.4'
+gem 'bundler', '>= 1.13.3'
 
 if Gem::Version.new(Bundler::VERSION) >= Gem::Version.new('1.14.0') &&
   Gem::Version.new(Gem::VERSION) < Gem::Version.new('2.6.9')
@@ -24,6 +24,8 @@ if Gem::Version.new(Bundler::VERSION) >= Gem::Version.new('1.14.0') &&
 end
 
 # NOTE: this has to use 1.8.7 hash syntax to not raise a parser exception on 1.8.7
+# run ruby 2.7 even if they don't like it.  Hopefully we will be ruby-3 without their
+# permission
 if RUBY_VERSION >= "2.4.0" && RUBY_VERSION < "2.6"
   ruby RUBY_VERSION, :engine => 'ruby', :engine_version => RUBY_VERSION
 elsif RUBY_VERSION >= "2.6.0" && RUBY_VERSION < "2.8"
@@ -34,12 +36,12 @@ else
 end
 
 # force a different lockfile for next rails
-unless CANVAS_RAILS5_2
+#unless CANVAS_RAILS5_2
   Bundler::SharedHelpers.class_eval do
     class << self
       def default_lockfile
         lockfile = "#{Bundler.default_gemfile}.lock"
-        lockfile << ".next" unless CANVAS_RAILS5_2
+        lockfile << ".next" #unless CANVAS_RAILS5_2
         Pathname.new(lockfile)
       end
     end
@@ -51,7 +53,7 @@ unless CANVAS_RAILS5_2
       Definition.new(Bundler.default_lockfile, @dependencies, @sources, unlock, @ruby_version)
     end
   end
-end
+#end
 
 if Bundler::VERSION < '2'
   git_source(:github) do |repo_name|

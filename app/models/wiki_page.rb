@@ -393,7 +393,7 @@ class WikiPage < ActiveRecord::Base
   end
 
   def increment_view_count(user, context = nil)
-    Shackles.activate(:master) do
+    GuardRail.activate(:primary) do
       unless self.new_record?
         self.with_versioning(false) do |p|
           context ||= p.context

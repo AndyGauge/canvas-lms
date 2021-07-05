@@ -16,7 +16,7 @@
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 %>
 
-<% provide :page_title do %><%= t('Dashboard') %><% end %>
+<% provide :page_title do %><%= I18n.t('Dashboard') %><% end %>
 <%
   if show_planner?
     # fire off these `fetch` requests now so they are ready sooner
@@ -40,7 +40,7 @@
   <%= render :partial => 'shared/dashboard_messages' %>
 
   <div id="dashboard_header_container" class="ic-Dashboard-header">
-    <h1 class="ic-Dashboard-header__title hidden-phone"><%= t "Dashboard" %></h1>
+    <h1 class="ic-Dashboard-header__title hidden-phone"><%= I18n.t "Dashboard" %></h1>
   </div>
   <% if planner_enabled? %>
     <div id="dashboard-planner" class="StudentPlanner__Container" style="display: <%= show_planner? ? 'block' : 'none' %>"></div>

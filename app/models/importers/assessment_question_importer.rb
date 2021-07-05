@@ -157,7 +157,7 @@ module Importers
           INSERT INTO #{AssessmentQuestion.quoted_table_name} (name, question_data, workflow_state, created_at, updated_at, assessment_question_bank_id, migration_id)
           VALUES (?,?,'active',?,?,?,?)
         SQL
-        Shackles.activate(:master) do
+        GuardRail.activate(:primary) do
           id = AssessmentQuestion.connection.insert(query, "#{name} Create",
             AssessmentQuestion.primary_key, nil, AssessmentQuestion.sequence_name)
           hash['assessment_question_id'] = id

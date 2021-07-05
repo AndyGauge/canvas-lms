@@ -226,6 +226,8 @@ I18n.send(:extend, Module.new {
       key, options = I18nliner::CallHelpers.infer_arguments(args)
       raise if (options[:locale] || locale) == default_locale
       super(key, options.merge(locale: default_locale))
+    rescue I18n::ArgumentError
+      return args.dig(0,:default,0)
     end
   end
   alias :t :translate

@@ -23,7 +23,7 @@ class Quizzes::QuizSubmissionEventPartitioner
   end
 
   def self.process(in_migration=false)
-    Shackles.activate(:deploy) do
+    GuardRail.activate(:deploy) do
       Quizzes::QuizSubmissionEvent.transaction do
         log '*' * 80
         log '-' * 80

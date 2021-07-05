@@ -468,7 +468,7 @@ class WikiPagesApiController < ApplicationController
   #
   # @returns PageRevision
   def show_revision
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       if params.has_key?(:revision_id)
         permission = :read_revisions
         revision = @page.versions.where(number: params[:revision_id].to_i).first!

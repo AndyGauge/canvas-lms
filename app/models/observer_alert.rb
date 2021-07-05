@@ -56,7 +56,7 @@ class ObserverAlert < ActiveRecord::Base
 
   def self.create_assignment_missing_alerts
     alerts = []
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       ObserverAlertThreshold.find_ids_in_ranges(:batch_size => 100) do |min_id, max_id|
         submissions = Submission.active.
           eager_load(:assignment, user: :as_student_observer_alert_thresholds).

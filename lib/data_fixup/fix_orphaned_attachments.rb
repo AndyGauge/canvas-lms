@@ -20,7 +20,7 @@ module DataFixup
 
     def self.run
       @new_roots = Set.new
-      Shackles.activate(:slave) do
+      GuardRail.activate(:secondary) do
         scope = Attachment.
           where("root_attachment_id IS NOT NULL AND
             NOT EXISTS (SELECT id
@@ -36,7 +36,7 @@ module DataFixup
     end
 
     def self.create_users
-      Shackles.activate(:master) do
+      GuardRail.activate(:primary) do
         @deleted_user = User.create(name: 'rescued attachments')
         @deleted_user.destroy
         @broken_user = User.create(name: 'broken attachments')
@@ -98,7 +98,7 @@ module DataFixup
       rescued_orphan.file_state = 'deleted'
       rescued_orphan.md5 = attachment.md5
       ns = rescued_orphan.namespace = attachment.namespace
-      Shackles.activate(:master) do
+      GuardRail.activate(:primary) do
         Attachment.s3_storage? ? s3_save(rescued_orphan, ns) : local_storage_save(rescued_orphan)
         if rescued_orphan.id != attachment.root_attachment_id
           Attachment.where(root_attachment_id: attachment.root_attachment_id).update_all(root_attachment_id: rescued_orphan.id)

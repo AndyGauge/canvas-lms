@@ -18,7 +18,7 @@
 module DataFixup::CreateCanvadocsSubmissionsRecords
 
   def self.run
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       %w(canvadocs crocodoc_documents).each do |table|
         association = table.singularize
         column = "#{association}_id"
@@ -31,7 +31,7 @@ module DataFixup::CreateCanvadocsSubmissionsRecords
             {:submission_id => aa.submission_id,
              column         => aa[column]}
           end
-          Shackles.activate(:master) do
+          GuardRail.activate(:primary) do
             CanvadocsSubmission.bulk_insert canvadocs_submissions
           end
         end
