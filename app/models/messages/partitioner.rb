@@ -7,7 +7,7 @@ module Messages
     end
 
     def self.process
-      Shackles.activate(:deploy) do
+      GuardRail.activate(:deploy) do
         log '*' * 80
         log '-' * 80
 

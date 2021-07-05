@@ -263,7 +263,7 @@ module AccountReports::ReportHelper
 
   def write_report(headers, enable_i18n_features = false, &block)
     file = generate_and_run_report(headers, 'csv', enable_i18n_features, &block)
-    Shackles.activate(:master) { send_report(file) }
+    GuardRail.activate(:master) { send_report(file) }
   end
 
   def generate_and_run_report(headers = nil, extension = 'csv', enable_i18n_features = false)
@@ -275,8 +275,8 @@ module AccountReports::ReportHelper
     ExtendedCSV.open(file, "w", options) do |csv|
       csv.instance_variable_set(:@account_report, @account_report)
       csv << headers unless headers.nil?
-      Shackles.activate(:slave) { yield csv } if block_given?
-      Shackles.activate(:master) { @account_report.update_attribute(:current_line, csv.lineno) }
+      GuardRail.activate(:slave) { yield csv } if block_given?
+      GuardRail.activate(:master) { @account_report.update_attribute(:current_line, csv.lineno) }
     end
     file
   end
@@ -367,7 +367,7 @@ module AccountReports::ReportHelper
       # runners can be completed before they get here, and we should not try to process them.
       unless report_runner.workflow_state == 'completed'
         report_runner.start
-        Shackles.activate(:slave) { AccountReports::REPORTS[@account_report.report_type].parallel_proc.call(@account_report, report_runner) }
+        GuardRail.activate(:slave) { AccountReports::REPORTS[@account_report.report_type].parallel_proc.call(@account_report, report_runner) }
       end
     rescue => e
       report_runner.fail
@@ -405,7 +405,7 @@ module AccountReports::ReportHelper
   end
 
   def fail_with_error(error)
-    Shackles.activate(:master) do
+    GuardRail.activate(:master) do
       @account_report.account_report_runners.incomplete.update_all(workflow_state: 'aborted')
       @account_report.delete_account_report_rows
       Canvas::Errors.capture_exception(:account_report, error)
@@ -436,7 +436,7 @@ module AccountReports::ReportHelper
     updates[:current_line] = current_line if account_report.current_line < current_line
     updates[:progress] = progress if account_report.progress < progress
     unless updates.empty?
-      Shackles.activate(:master) do
+      GuardRail.activate(:master) do
         AccountReport.where(id: account_report).where("progress <?", progress).update_all(updates)
       end
     end
@@ -460,7 +460,7 @@ module AccountReports::ReportHelper
   class ExtendedCSV < CsvWithI18n
     def <<(row)
       if lineno % 1_000 == 0
-        Shackles.activate(:master) do
+        GuardRail.activate(:master) do
           report = self.instance_variable_get(:@account_report).reload
           updates = {}
           updates[:current_line] = lineno
@@ -497,7 +497,7 @@ module AccountReports::ReportHelper
     else
       @account_report.parameters["extra_text"] = text
     end
-    Shackles.activate(:master) do
+    GuardRail.activate(:master) do
       @account_report.save!
     end
   end

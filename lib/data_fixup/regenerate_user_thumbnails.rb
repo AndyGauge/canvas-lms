@@ -19,7 +19,7 @@ module DataFixup::RegenerateUserThumbnails
   def self.run
     profile_pic_ids = nil
 
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       profile_pic_ids = Attachment.connection.select_all <<-SQL
         SELECT DISTINCT at.id FROM #{User.quoted_table_name} AS u
         JOIN #{Attachment.quoted_table_name} AS at ON (at.context_type = 'User' and at.context_id = u.id)

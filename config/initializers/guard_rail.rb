@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 #
-# Copyright (C) 2015 - present Instructure, Inc.
+# Copyright (C) 2013 - present Instructure, Inc.
 #
 # This file is part of Canvas.
 #
@@ -15,11 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
 
-GoogleDrive::Connection.config = proc do
-  settings = Canvas::Plugin.find(:google_drive).try(:settings)
-  if settings
-    settings = settings.dup
-    settings[:client_secret] = settings[:client_secret_dec]
-  end
-  settings || ConfigFile.load('google_drive')
+if ENV['RAILS_DATABASE_ENVIRONMENT']
+  GuardRail.activate!(ENV['RAILS_DATABASE_ENVIRONMENT'].to_sym)
+end
+if ENV['RAILS_DATABASE_USER']
+  GuardRail.apply_config!(:username => ENV['RAILS_DATABASE_USER'], :password => nil)
 end

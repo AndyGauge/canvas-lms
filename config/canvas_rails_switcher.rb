@@ -18,39 +18,41 @@
 # You can enable the Rails 6.0 support by either defining a
 # CANVAS_RAILS6_0=1 env var, creating an empty RAILS6_0 file in the canvas config dir,
 # or setting `private/canvas/rails6.0` to `true` in a locally accessible consul
-unless defined?(CANVAS_RAILS5_2)
-  if ENV['CANVAS_RAILS6_0']
-    CANVAS_RAILS5_2 = ENV['CANVAS_RAILS6_0'] == '0'
-  elsif File.exist?(File.expand_path("../RAILS6_0", __FILE__))
-    CANVAS_RAILS5_2 = false
-  else
-    begin
-      # have to do the consul communication without any gems, because
-      # we're in the context of loading the gemfile
-      require 'base64'
-      require 'json'
-      require 'net/http'
-      require 'yaml'
+#unless defined?(CANVAS_RAILS5_2)
+CANVAS_RAILS5_2 = false
 
-      environment = YAML.load(File.read(File.expand_path("../consul.yml", __FILE__))).dig(ENV['RAILS_ENV'] || 'development', 'environment')
-
-      keys = [
-        ["private/canvas", environment, $canvas_cluster, "rails6.0"].compact.join("/"),
-        ["private/canvas", environment, "rails6.0"].compact.join("/"),
-        ["private/canvas", "rails6.0"].compact.join("/"),
-        ["global/private/canvas", environment, "rails6.0"].compact.join("/"),
-        ["global/private/canvas", "rails6.0"].compact.join("/")
-      ].uniq
-
-      result = nil
-      keys.each do |key|
-        result = Net::HTTP.get_response(URI("http://localhost:8500/v1/kv/#{key}"))
-        result = nil unless result.is_a?(Net::HTTPSuccess)
-        break if result
-      end
-      CANVAS_RAILS5_2 = !(result && Base64.decode64(JSON.load(result.body).first['Value']) == 'true')
-    rescue
-      CANVAS_RAILS5_2 = true
-    end
-  end
-end
+  # if ENV['CANVAS_RAILS6_0']
+  #   CANVAS_RAILS5_2 = ENV['CANVAS_RAILS6_0'] == '0'
+  # elsif File.exist?(File.expand_path("../RAILS6_0", __FILE__))
+  #   CANVAS_RAILS5_2 = false
+  # else
+  #   begin
+  #     # have to do the consul communication without any gems, because
+  #     # we're in the context of loading the gemfile
+  #     require 'base64'
+  #     require 'json'
+  #     require 'net/http'
+  #     require 'yaml'
+  #
+  #     environment = YAML.load(File.read(File.expand_path("../consul.yml", __FILE__))).dig(ENV['RAILS_ENV'] || 'development', 'environment')
+  #
+  #     keys = [
+  #       ["private/canvas", environment, $canvas_cluster, "rails6.0"].compact.join("/"),
+  #       ["private/canvas", environment, "rails6.0"].compact.join("/"),
+  #       ["private/canvas", "rails6.0"].compact.join("/"),
+  #       ["global/private/canvas", environment, "rails6.0"].compact.join("/"),
+  #       ["global/private/canvas", "rails6.0"].compact.join("/")
+  #     ].uniq
+  #
+  #     result = nil
+  #     keys.each do |key|
+  #       result = Net::HTTP.get_response(URI("http://localhost:8500/v1/kv/#{key}"))
+  #       result = nil unless result.is_a?(Net::HTTPSuccess)
+  #       break if result
+  #     end
+  #     CANVAS_RAILS5_2 = !(result && Base64.decode64(JSON.load(result.body).first['Value']) == 'true')
+  #   rescue
+  #     CANVAS_RAILS5_2 = true
+  #   end
+  # end
+#end

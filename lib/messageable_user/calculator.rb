@@ -233,7 +233,7 @@ class MessageableUser
     def self.slave(method)
       slave_module.module_eval <<-RUBY, __FILE__, __LINE__ + 1
         def #{method}(*)
-          Shackles.activate(:slave) { super }
+          GuardRail.activate(:secondary) { super }
         end
       RUBY
     end

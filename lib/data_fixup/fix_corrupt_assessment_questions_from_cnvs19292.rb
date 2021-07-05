@@ -127,9 +127,9 @@ DataFixup::FixCorruptAssessmentQuestionsFromCnvs19292 = Struct.new(:question_typ
       query = query.where(quiz_questions: {updated_at: bug_start_date..bug_end_date})
     end
 
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       query.readonly(false).find_each do |aq|
-        Shackles.activate(:master) do
+        GuardRail.activate(:primary) do
           Rails.logger.info "#{LOG_PREFIX} incrementing version for assessment question #{aq.global_id} from #{aq.version_number}"
           aq.with_versioning(true, &:save!)
         end

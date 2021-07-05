@@ -26,6 +26,7 @@ class LoadAccount
     configure_for_root_account(domain_root_account)
 
     env['canvas.domain_root_account'] = domain_root_account
+
     @app.call(env)
   end
 

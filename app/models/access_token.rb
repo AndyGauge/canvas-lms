@@ -280,6 +280,6 @@ class AccessToken < ActiveRecord::Base
   end
 
   def slaved_developer_key
-    Shackles.activate(:slave){ return developer_key }
+    GuardRail.activate(:secondary){ return developer_key }
   end
 end

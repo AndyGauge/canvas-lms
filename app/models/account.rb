@@ -763,7 +763,7 @@ class Account < ActiveRecord::Base
     end
 
     if starting_account_id
-      Shackles.activate(:slave) do
+      GuardRail.activate(:secondary) do
         chain.concat(Shard.shard_for(starting_account_id).activate do
           Account.find_by_sql(<<-SQL)
                 WITH RECURSIVE t AS (
@@ -789,7 +789,7 @@ class Account < ActiveRecord::Base
         end
 
         if starting_account_id
-          Shackles.activate(:slave) do
+          GuardRail.activate(:secondary) do
             ids = Account.connection.select_values(<<-SQL)
                   WITH RECURSIVE t AS (
                     SELECT * FROM #{Account.quoted_table_name} WHERE id=#{Shard.local_id_for(starting_account_id).first}
@@ -1149,7 +1149,7 @@ class Account < ActiveRecord::Base
   def default_enrollment_term
     return @default_enrollment_term if @default_enrollment_term
     if self.root_account?
-      @default_enrollment_term = Shackles.activate(:master) { self.enrollment_terms.active.where(name: EnrollmentTerm::DEFAULT_TERM_NAME).first_or_create }
+      @default_enrollment_term = GuardRail.activate(:primary) { self.enrollment_terms.active.where(name: EnrollmentTerm::DEFAULT_TERM_NAME).first_or_create }
     end
   end
 

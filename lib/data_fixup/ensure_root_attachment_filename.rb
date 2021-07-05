@@ -17,7 +17,7 @@
 
 module DataFixup::EnsureRootAttachmentFilename
   def self.run
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       Attachment.where(root_attachment_id: nil).
         joins("INNER JOIN #{Attachment.quoted_table_name} child ON attachments.id = child.root_attachment_id AND attachments.filename <> child.filename").
         where.not(workflow_state: 'broken').find_each do |root|
@@ -32,7 +32,7 @@ module DataFixup::EnsureRootAttachmentFilename
         end
       end
       Attachment.where.not(root_attachment_id: nil, filename: nil, workflow_state: 'broken').find_in_batches do |batch|
-        Shackles.activate(:master) do
+        GuardRail.activate(:primary) do
           Attachment.where(id: batch).update_all(filename: nil)
         end
       end
@@ -58,7 +58,7 @@ module DataFixup::EnsureRootAttachmentFilename
   end
 
   def self.update_root_from_child(child, root)
-    Shackles.activate(:master) do
+    GuardRail.activate(:primary) do
       root.update_attribute(:filename, child.filename)
     end
   end

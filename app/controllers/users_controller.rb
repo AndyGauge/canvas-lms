@@ -364,7 +364,7 @@ class UsersController < ApplicationController
     @root_account = @context.root_account
     @query = (params[:user] && params[:user][:name]) || params[:term]
     js_env :ACCOUNT => account_json(@domain_root_account, nil, session, ['registration_settings'])
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       if @context && @context.is_a?(Account) && @query
         @users = @context.users_name_like(@query)
       elsif params[:enrollment_term_id].present? && @root_account == @context
@@ -598,7 +598,7 @@ class UsersController < ApplicationController
   end
 
   def dashboard_sidebar
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       prepare_current_user_dashboard_items
 
       if (@show_recent_feedback = @current_user.student_enrollments.active.exists?)
@@ -606,7 +606,8 @@ class UsersController < ApplicationController
       end
     end
 
-    render :formats => 'html', :layout => false
+
+    render :formats => :html, :layout => false
   end
 
   def toggle_hide_dashcard_color_overlays
@@ -1004,7 +1005,7 @@ class UsersController < ApplicationController
   def upcoming_events
     return render_unauthorized_action unless @current_user
 
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       prepare_current_user_dashboard_items
 
       events = @upcoming_events.map do |e|
@@ -1032,7 +1033,7 @@ class UsersController < ApplicationController
   #
   # @returns [Assignment]
   def missing_submissions
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       user = api_find(User, params[:user_id])
       return render_unauthorized_action unless @current_user && user.grants_right?(@current_user, :read)
 
@@ -1197,7 +1198,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       get_context
       @context_account = @context.is_a?(Account) ? @context : @domain_root_account
       @user = params[:id] && params[:id] != 'self' ? User.find(params[:id]) : @current_user

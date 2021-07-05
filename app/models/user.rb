@@ -1911,7 +1911,7 @@ class User < ActiveRecord::Base
       Rails.cache.fetch([self, 'submissions_for_context_codes', context_codes, start_at, limit].cache_key, expires_in: 15.minutes) do
         start_at ||= 4.weeks.ago
 
-        Shackles.activate(:slave) do
+        GuardRail.activate(:secondary) do
           submissions = []
           submissions += self.submissions.posted.where("GREATEST(submissions.submitted_at, submissions.created_at) > ?", start_at).
             for_context_codes(context_codes).eager_load(:assignment).
@@ -1999,7 +1999,7 @@ class User < ActiveRecord::Base
   # NOTE: excludes submission stream items
   def recent_stream_items(opts={})
     self.shard.activate do
-      Shackles.activate(:slave) do
+      GuardRail.activate(:secondary) do
         visible_instances = visible_stream_item_instances(opts).
           preload(stream_item: :context).
           limit(Setting.get('recent_stream_item_limit', 100))

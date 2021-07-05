@@ -66,6 +66,12 @@ class ActiveRecord::Base
     def default_scope(*)
       raise "please don't ever use default_scope. it may seem like a great solution, but I promise, it isn't"
     end
+    def vacuum
+      GuardRail.activate(:deploy) do
+        connection.vacuum(table_name, analyze: true)
+      end
+    end
+
   end
 
   def read_or_initialize_attribute(attr_name, default_value)
@@ -614,7 +620,7 @@ class ActiveRecord::Base
       rescue ActiveRecord::RecordNotUnique
       end
     end
-    Shackles.activate(:master) do
+    GuardRail.activate(:primary) do
       result = transaction(:requires_new => true) { uncached { yield(retries) } }
       connection.clear_query_cache
       result
@@ -622,8 +628,8 @@ class ActiveRecord::Base
   end
 
   def self.current_xlog_location
-    Shard.current(shard_category).database_server.unshackle do
-      Shackles.activate(:master) do
+    Shard.current(shard_category).database_server.unguard do
+      GuardRail.activate(:primary) do
         if Rails.env.test? ? self.in_transaction_in_test? : connection.open_transactions > 0
           raise "don't run current_xlog_location in a transaction"
         elsif connection.send(:postgresql_version) >= 100000
@@ -636,10 +642,10 @@ class ActiveRecord::Base
   end
 
   def self.wait_for_replication(start: nil, timeout: nil)
-    return true unless Shackles.activate(:slave) { connection.readonly? }
+    return true unless GuardRail.activate(:secondary) { connection.readonly? }
 
     start ||= current_xlog_location
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       diff_fn = connection.send(:postgresql_version) >= 100000 ?
         "pg_wal_lsn_diff" :
         "pg_xlog_location_diff"
@@ -763,7 +769,7 @@ ActiveRecord::Relation.class_eval do
   private :find_in_batches_needs_temp_table?
 
   def should_use_cursor?
-    (Shackles.environment == :slave || connection.readonly?)
+    (GuardRail.environment == :secondary || connection.readonly?)
   end
 
   def find_in_batches_with_cursor(options = {})
@@ -864,10 +870,10 @@ ActiveRecord::Relation.class_eval do
   end
 
   def find_in_batches_with_temp_table(options = {})
-    Shard.current.database_server.unshackle do
+    Shard.current.database_server.unguard do
       can_do_it = Rails.env.production? ||
         ActiveRecord::Base.in_migration ||
-        Shackles.environment == :deploy ||
+          GuardRail.environment == :deploy ||
         (!Rails.env.test? && connection.open_transactions > 0) ||
         ActiveRecord::Base.in_transaction_in_test?
       raise "find_in_batches_with_temp_table probably won't work outside a migration
@@ -1101,10 +1107,15 @@ module UpdateAndDeleteWithJoins
   end
 
   def update_all(updates, *args)
-    db = Shard.current(klass.shard_category).database_server
+
+    db = if klass.respond_to? :shard_category
+           Shard.current(klass.shard_category).database_server
+         else
+           Shard.current.database_server
+         end
     if joins_values.empty?
-      if ::Shackles.environment != db.shackles_environment
-        Shard.current.database_server.unshackle {return super }
+      if ::GuardRail.environment != db.guard_rail_environment
+        Shard.current.database_server.unguard {return super }
       else
         return super
       end
@@ -1143,8 +1154,8 @@ module UpdateAndDeleteWithJoins
     end
     where_sql = collector.value
     sql.concat('WHERE ' + where_sql)
-    if ::Shackles.environment != db.shackles_environment
-      Shard.current.database_server.unshackle {connection.update(sql, "#{name} Update")}
+    if ::GuardRail.environment != db.guard_rail_environment
+      Shard.current.database_server.unguard {connection.update(sql, "#{name} Update")}
     else
       connection.update(sql, "#{name} Update")
     end
@@ -1641,9 +1652,9 @@ end
 ActiveRecord::ConnectionAdapters::SchemaCache.prepend(TableRename)
 
 ActiveRecord::Base.prepend(DefeatInspectionFilterMarshalling)
-ActiveRecord::Base.prepend(Canvas::CacheRegister::ActiveRecord::Base)
-ActiveRecord::Base.singleton_class.prepend(Canvas::CacheRegister::ActiveRecord::Base::ClassMethods)
-ActiveRecord::Relation.prepend(Canvas::CacheRegister::ActiveRecord::Relation)
+ActiveRecord::Base.prepend(ActiveRecord::CacheRegister::Base)
+ActiveRecord::Base.singleton_class.prepend(ActiveRecord::CacheRegister::Base::ClassMethods)
+ActiveRecord::Relation.prepend(ActiveRecord::CacheRegister::Relation)
 
 # see https://github.com/rails/rails/issues/37745
 module DontExplicitlyNameColumnsBecauseOfIgnores

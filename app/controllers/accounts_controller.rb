@@ -683,7 +683,7 @@ class AccountsController < ApplicationController
     page_opts[:total_entries] = nil if params[:search_term] # doesn't calculate a total count
 
     all_precalculated_permissions = nil
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       @courses = Api.paginate(@courses, self, api_v1_account_courses_url, page_opts)
 
       ActiveRecord::Associations::Preloader.new.preload(@courses, [:account, :root_account, course_account_associations: :account])
@@ -1315,7 +1315,7 @@ class AccountsController < ApplicationController
   def courses
     if authorized_action(@context, @current_user, :read)
       order = sort_order # must be done on master because it persists in user preferences
-      Shackles.activate(:slave) do
+      GuardRail.activate(:secondary) do
         load_course_right_side
         @courses = []
         @query = (params[:course] && params[:course][:name]) || params[:term]
@@ -1328,7 +1328,7 @@ class AccountsController < ApplicationController
       respond_to do |format|
         format.html {
           return redirect_to @courses.first if @courses.length == 1
-          Shackles.activate(:slave) do
+          GuardRail.activate(:secondary) do
             build_course_stats
           end
         }

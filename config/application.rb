@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License along
 # with this program. If not, see <http://www.gnu.org/licenses/>.
-
+CANVAS_RAILS6_0=false
 # Put this in config/application.rb
 require File.expand_path('../boot', __FILE__)
 

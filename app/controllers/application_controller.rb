@@ -786,7 +786,7 @@ class ApplicationController < ActionController::Base
   # Also assigns @context_membership to the membership type of @current_user
   # if @current_user is a member of the context.
   def get_context
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       unless @context
         if params[:course_id]
           @context = api_find(Course.active, params[:course_id])
@@ -990,7 +990,7 @@ class ApplicationController < ActionController::Base
   end
 
   def content_participation_count(context, type, user)
-    Shackles.activate(:master) do
+    GuardRail.activate(:primary) do
       ContentParticipationCount.create_or_update({context: context, user: user, content_type: type})
     end
   end

@@ -474,7 +474,7 @@ class CoursesController < ApplicationController
   #
   # @returns [Course]
   def index
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       respond_to do |format|
         format.html {
           css_bundle :context_list, :course_list
@@ -619,7 +619,7 @@ class CoursesController < ApplicationController
   #
   # @returns [Course]
   def user_index
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       render json: courses_for_user(@user, paginate_url: api_v1_user_courses_url(@user))
     end
   end
@@ -952,7 +952,7 @@ class CoursesController < ApplicationController
   #  "active" and "invited" enrollments are returned by default.
   # @returns [User]
   def users
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       get_context
       if authorized_action(@context, @current_user, [:read_roster, :view_all_grades, :manage_grades])
         log_api_asset_access([ "roster", @context ], 'roster', 'other')
@@ -1566,7 +1566,7 @@ class CoursesController < ApplicationController
   def accept_enrollment(enrollment)
     if @current_user && enrollment.user == @current_user
       if enrollment.workflow_state == 'invited'
-        Shackles.activate(:master) do
+        GuardRail.activate(:primary) do
           DueDateCacher.with_executing_user(@current_user) do
             enrollment.accept!
           end
@@ -1605,7 +1605,7 @@ class CoursesController < ApplicationController
   # Returns nothing.
   def reject_enrollment(enrollment)
     if enrollment.invited?
-      Shackles.activate(:master) do
+      GuardRail.activate(:primary) do
         enrollment.reject!
       end
       flash[:notice] = t('notices.invitation_cancelled', 'Invitation canceled.')
@@ -1647,7 +1647,7 @@ class CoursesController < ApplicationController
 
       if enrollment.rejected?
         enrollment.workflow_state = 'invited'
-        Shackles.activate(:master) {enrollment.save_without_broadcasting}
+        GuardRail.activate(:primary) {enrollment.save_without_broadcasting}
       end
 
       if enrollment.self_enrolled?
@@ -1835,7 +1835,7 @@ class CoursesController < ApplicationController
   #
   # @returns Course
   def show
-    Shackles.activate(:slave) do
+    GuardRail.activate(:secondary) do
       if api_request?
         includes = Set.new(Array(params[:include]))
 
@@ -1887,7 +1887,7 @@ class CoursesController < ApplicationController
 
       return if check_for_xlist
       @unauthorized_message = t('unauthorized.invalid_link', "The enrollment link you used appears to no longer be valid.  Please contact the course instructor and make sure you're still correctly enrolled.") if params[:invitation]
-      Shackles.activate(:master) do
+      GuardRail.activate(:primary) do
         claim_course if session[:claim_course_uuid] || params[:verification]
         @context.claim if @context.created?
       end
@@ -1911,7 +1911,7 @@ class CoursesController < ApplicationController
         check_incomplete_registration
 
         add_crumb(@context.nickname_for(@current_user, :short_name), url_for(@context), :id => "crumb_#{@context.asset_string}")
-        Shackles.activate(:master) do
+        GuardRail.activate(:primary) do
           set_badge_counts_for(@context, @current_user, @current_enrollment)
         end
 

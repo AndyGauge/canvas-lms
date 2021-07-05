@@ -538,7 +538,7 @@ class DiscussionTopic < ActiveRecord::Base
     return 0 unless current_user # default for logged out users
 
     environment = lock ? :master : :slave
-    Shackles.activate(environment) do
+    GuardRail.activate(environment) do
       topic_participant = if opts[:use_preload] && self.association(:discussion_topic_participants).loaded?
         self.discussion_topic_participants.find{|dtp| dtp.user_id == current_user.id}
       else
@@ -628,7 +628,7 @@ class DiscussionTopic < ActiveRecord::Base
     return nil unless current_user
 
     topic_participant = nil
-    Shackles.activate(:master) do
+    GuardRail.activate(:primary) do
       DiscussionTopic.uncached do
         DiscussionTopic.unique_constraint_retry do
           topic_participant = self.discussion_topic_participants.where(:user_id => current_user).lock.first
